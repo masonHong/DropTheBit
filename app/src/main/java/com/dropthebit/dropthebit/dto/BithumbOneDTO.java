@@ -1,11 +1,11 @@
-package com.dropthebit.dropthebit;
+package com.dropthebit.dropthebit.dto;
 
 /**
  * Created by mason-hong on 2017. 12. 14..
  */
-public class BithumbDTO {
+public class BithumbOneDTO {
     private String status;
-    private AllCurrencyDTO data;
+    private BithumbCurrencyDTO data;
 
     public String getStatus() {
         return status;
@@ -15,11 +15,11 @@ public class BithumbDTO {
         this.status = status;
     }
 
-    public AllCurrencyDTO getData() {
+    public BithumbCurrencyDTO getData() {
         return data;
     }
 
-    public void setData(AllCurrencyDTO data) {
+    public void setData(BithumbCurrencyDTO data) {
         this.data = data;
     }
 }

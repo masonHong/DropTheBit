@@ -1,9 +1,9 @@
-package com.dropthebit.dropthebit;
+package com.dropthebit.dropthebit.dto;
 
 /**
  * Created by mason-hong on 2017. 12. 14..
  */
-public class CurrencyDTO {
+public class BithumbCurrencyDTO {
     private String opening_price;
     private String closing_price;
     private String min_price;

@@ -1,5 +1,8 @@
 package com.dropthebit.dropthebit;
 
+import com.dropthebit.dropthebit.dto.BithumbAllDTO;
+import com.dropthebit.dropthebit.dto.BithumbOneDTO;
+
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -41,7 +44,11 @@ public class BithumbProvider {
         service = retrofit.create(BithumbService.class);
     }
 
-    public Observable<BithumbDTO> getAllPrices() {
+    public Observable<BithumbAllDTO> getAllPrices() {
         return service.getAllPrices();
+    }
+
+    public Observable<BithumbOneDTO> getPrice(BithumbType type) {
+        return service.getPrice(type.key);
     }
 }
