@@ -1,8 +1,10 @@
-package com.dropthebit.dropthebit;
+package com.dropthebit.dropthebit.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import com.dropthebit.dropthebit.R;
 
 /**
  * Created by mason-hong on 2017. 12. 13..

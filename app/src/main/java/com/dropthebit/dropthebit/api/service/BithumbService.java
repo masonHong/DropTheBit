@@ -1,4 +1,4 @@
-package com.dropthebit.dropthebit;
+package com.dropthebit.dropthebit.api.service;
 
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 import com.dropthebit.dropthebit.dto.BithumbOneDTO;
@@ -9,6 +9,7 @@ import retrofit2.http.Path;
 
 /**
  * Created by mason-hong on 2017. 12. 14..
+ * Bithumb API
  */
 public interface BithumbService {
     @GET("public/ticker/ALL")

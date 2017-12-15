@@ -1,7 +1,9 @@
 package com.dropthebit.dropthebit;
 
+import com.dropthebit.dropthebit.api.provider.BithumbProvider;
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 import com.dropthebit.dropthebit.dto.BithumbOneDTO;
+import com.dropthebit.dropthebit.model.BithumbType;
 
 import org.junit.Test;
 

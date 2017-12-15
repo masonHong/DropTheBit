@@ -1,7 +1,9 @@
-package com.dropthebit.dropthebit;
+package com.dropthebit.dropthebit.api.provider;
 
+import com.dropthebit.dropthebit.api.service.BithumbService;
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 import com.dropthebit.dropthebit.dto.BithumbOneDTO;
+import com.dropthebit.dropthebit.model.BithumbType;
 
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
@@ -12,6 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by mason-hong on 2017. 12. 14..
+ * Bithumb API 제공자
  */
 public class BithumbProvider {
     private static final String BASE_URL = "https://api.bithumb.com/";
