@@ -62,7 +62,7 @@ public class MainFragment extends BaseFragment {
                 .subscribe(new Consumer<BithumbAllDTO>() {
                     @Override
                     public void accept(BithumbAllDTO bithumbAllDTO) throws Exception {
-                        Log.d("Test", "Buy: " + bithumbAllDTO.getData().getBTC().getBuy_price() + ", Sell: " + bithumbAllDTO.getData().getBTC().getSell_price());
+                        Log.d("Test", "시세: " + bithumbAllDTO.getData().getBTC().getClosing_price());
                     }
                 });
         compositeDisposable.add(disposable);
