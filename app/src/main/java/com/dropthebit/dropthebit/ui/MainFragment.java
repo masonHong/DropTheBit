@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.dropthebit.dropthebit.R;
-import com.dropthebit.dropthebit.api.provider.BithumbProvider;
+import com.dropthebit.dropthebit.api.BithumbProvider;
 import com.dropthebit.dropthebit.base.BaseFragment;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;

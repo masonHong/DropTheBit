@@ -1,6 +1,5 @@
-package com.dropthebit.dropthebit.api.provider;
+package com.dropthebit.dropthebit.api;
 
-import com.dropthebit.dropthebit.api.service.BithumbService;
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 import com.dropthebit.dropthebit.dto.BithumbOneDTO;
 import com.dropthebit.dropthebit.model.BithumbType;

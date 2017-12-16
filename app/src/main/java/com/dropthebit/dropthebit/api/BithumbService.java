@@ -1,4 +1,4 @@
-package com.dropthebit.dropthebit.api.service;
+package com.dropthebit.dropthebit.api;
 
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 import com.dropthebit.dropthebit.dto.BithumbOneDTO;
