@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DropTheBit.iml" filepath="$PROJECT_DIR$/DropTheBit.iml" />
-      <module fileurl="file://C:\Users\HTJ_Home_PC\Documents\Github\DropTheBit\DropTheBit.iml" filepath="C:\Users\HTJ_Home_PC\Documents\Github\DropTheBit\DropTheBit.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\HTJ_Home_PC\Documents\Github\DropTheBit\app\app.iml" filepath="C:\Users\HTJ_Home_PC\Documents\Github\DropTheBit\app\app.iml" />
     </modules>
   </component>
 </project>
