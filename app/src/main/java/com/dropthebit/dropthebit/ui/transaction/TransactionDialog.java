@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.dropthebit.dropthebit.ui.main.InterestTabFragment;
+import com.dropthebit.dropthebit.R;
+
+import butterknife.ButterKnife;
 
 /**
  * Created by mason-hong on 2017. 12. 16..
@@ -24,6 +26,8 @@ public class TransactionDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.dialog_transaction, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 }

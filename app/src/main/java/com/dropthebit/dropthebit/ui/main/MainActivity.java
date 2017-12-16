@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
 
+    public int interval;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private List<Fragment> fragmentList = new ArrayList<>();
     private List<String> titleList = new ArrayList<>();
 
@@ -83,17 +85,13 @@ public class MainActivity extends AppCompatActivity {
         compositeDisposable.add(disposable);
 
         fragmentList.add(InterestTabFragment.newInstance());
-        titleList.add("관심종목");
+        titleList.add(getString(R.string.interest_tab_title));
         fragmentList.add(TotalTabFragment.newInstance());
-        titleList.add("전체");
+        titleList.add(getString(R.string.total_tab_title));
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
         viewPager.setOffscreenPageLimit(2);
         tabLayout.setupWithViewPager(viewPager);
     }
-
-
-    public int interval;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     public void onStop() {
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
 
-        public ViewPagerAdapter(FragmentManager fm) {
+        ViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
