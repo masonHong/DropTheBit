@@ -15,7 +15,7 @@ import io.reactivex.functions.Consumer;
 
 public class SplashActivity extends AppCompatActivity {
 
-    Disposable disposable = null;
+    private Disposable disposable = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
