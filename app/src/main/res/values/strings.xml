@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DropTheBit</string>
+    <string name="interest_tab_title">관심종목</string>
+    <string name="total_tab_title">전체</string>
 </resources>
