@@ -20,7 +20,7 @@ public class InterestTabFragment extends BaseFragment {
 
     @Override
     public int getLayoutResourceId() {
-        return R.layout.fragment_tab_interest;
+        return R.layout.fragment_tab;
     }
 
     @Override

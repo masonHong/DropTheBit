@@ -61,29 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        interval = 2000;
-        // 프래그먼트가 종료되었을 때 메모리 해제를 위해 저장하며
-        // interval을 사용해서 주기적으로 호출 할 수 있도록 한다
-        Disposable disposable = Observable.interval(interval, TimeUnit.MILLISECONDS)
-                .flatMap(new Function<Long, ObservableSource<BithumbAllDTO>>() {
-                    @Override
-                    public ObservableSource<BithumbAllDTO> apply(Long aLong) throws Exception {
-                        // 호출할 데이터는 Bithumb API
-                        return BithumbProvider.getInstance().getAllPrices();
-                    }
-                })
-                // io Scheduler에서 관리
-                .subscribeOn(Schedulers.io())
-                // 결과는 mainThread에서
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<BithumbAllDTO>() {
-                    @Override
-                    public void accept(BithumbAllDTO bithumbAllDTO) throws Exception {
-                        Log.d("Test", "시세: " + bithumbAllDTO.getData().getBTC().getClosing_price());
-                    }
-                });
-        compositeDisposable.add(disposable);
-
         fragmentList.add(InterestTabFragment.newInstance());
         titleList.add(getString(R.string.interest_tab_title));
         fragmentList.add(TotalTabFragment.newInstance());
