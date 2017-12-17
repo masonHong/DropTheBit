@@ -1,9 +1,13 @@
 package com.dropthebit.dropthebit.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import android.support.annotation.NonNull;
 
+import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.api.BithumbProvider;
+import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 import com.dropthebit.dropthebit.dto.BithumbCurrencyDTO;
 import com.dropthebit.dropthebit.model.CurrencyData;
 
@@ -19,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by mason-hong on 2017. 12. 17..
  */
-public class CurrencyViewModel extends ViewModel {
+public class CurrencyViewModel extends AndroidViewModel {
     private MutableLiveData<List<CurrencyData>> currencyList = new MutableLiveData<>();
     private MutableLiveData<CurrencyData> BTC = new MutableLiveData<>();
     private MutableLiveData<CurrencyData> BCH = new MutableLiveData<>();
@@ -30,40 +34,21 @@ public class CurrencyViewModel extends ViewModel {
     private MutableLiveData<CurrencyData> QTUM = new MutableLiveData<>();
     private MutableLiveData<CurrencyData> LTC = new MutableLiveData<>();
     private MutableLiveData<CurrencyData> DASH = new MutableLiveData<>();
+    private String[] coinNames;
 
     private Disposable disposableTotal = null;
 
-    public CurrencyViewModel() {
-        super();
+    public CurrencyViewModel(@NonNull Application application) {
+        super(application);
         // 프래그먼트가 종료되었을 때 메모리 해제를 위해 저장하며
         // interval을 사용해서 주기적으로 호출 할 수 있도록 한다
+        coinNames = application.getResources().getStringArray(R.array.coinNames);
         disposableTotal = Observable.interval(0, 3000, TimeUnit.MILLISECONDS)
                 .flatMap(aLong -> {
                     // 호출할 데이터는 Bithumb API
                     return BithumbProvider.getInstance().getAllPrices();
                 })
-                .map(dto -> {
-                    List<CurrencyData> ret = new ArrayList<>();
-                    BithumbCurrencyDTO target = dto.getData().getBTC();
-                    ret.add(new CurrencyData("비트코인", target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    target = dto.getData().getBCH();
-                    ret.add(new CurrencyData("비트코인캐시", target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    target = dto.getData().getBTG();
-                    ret.add(new CurrencyData("비트코인골드", target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    target = dto.getData().getETH();
-                    ret.add(new CurrencyData("이더리움", target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    target = dto.getData().getETC();
-                    ret.add(new CurrencyData("이더리움클래식", target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    target = dto.getData().getXRP();
-                    ret.add(new CurrencyData("리플", target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    target = dto.getData().getQTUM();
-                    ret.add(new CurrencyData("퀀텀", target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    target = dto.getData().getLTC();
-                    ret.add(new CurrencyData("라이트코인", target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    target = dto.getData().getDASH();
-                    ret.add(new CurrencyData("대쉬", target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    return ret;
-                })
+                .map(this::makeList)
                 // io Scheduler에서 관리
                 .subscribeOn(Schedulers.io())
                 // 결과는 mainThread에서
@@ -128,5 +113,28 @@ public class CurrencyViewModel extends ViewModel {
 
     public MutableLiveData<CurrencyData> getDASH() {
         return DASH;
+    }
+
+    private List<CurrencyData> makeList(BithumbAllDTO dto) {
+        List<CurrencyData> ret = new ArrayList<>();
+        BithumbCurrencyDTO target = dto.getData().getBTC();
+        ret.add(new CurrencyData(coinNames[0], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        target = dto.getData().getBCH();
+        ret.add(new CurrencyData(coinNames[1], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        target = dto.getData().getBTG();
+        ret.add(new CurrencyData(coinNames[2], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        target = dto.getData().getETH();
+        ret.add(new CurrencyData(coinNames[3], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        target = dto.getData().getETC();
+        ret.add(new CurrencyData(coinNames[4], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        target = dto.getData().getXRP();
+        ret.add(new CurrencyData(coinNames[5], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        target = dto.getData().getQTUM();
+        ret.add(new CurrencyData(coinNames[6], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        target = dto.getData().getLTC();
+        ret.add(new CurrencyData(coinNames[7], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        target = dto.getData().getDASH();
+        ret.add(new CurrencyData(coinNames[8], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        return ret;
     }
 }
