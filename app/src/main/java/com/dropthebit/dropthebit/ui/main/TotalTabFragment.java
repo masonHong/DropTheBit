@@ -2,6 +2,7 @@ package com.dropthebit.dropthebit.ui.main;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.base.BaseFragment;
+import com.dropthebit.dropthebit.base.TabFragment;
+import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
@@ -23,16 +26,17 @@ import butterknife.ButterKnife;
 /**
  * Created by mason-hong on 2017. 12. 16..
  */
-public class TotalTabFragment extends BaseFragment {
+public class TotalTabFragment extends TabFragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
     private TotalListAdapter adapter = new TotalListAdapter();
 
-    public static TotalTabFragment newInstance() {
+    public static TotalTabFragment newInstance(String tabTitle) {
         TotalTabFragment fragment = new TotalTabFragment();
         Bundle args = new Bundle();
+        args.putString(Constants.ARGUMENT_TAB_TITLE, tabTitle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,10 +47,16 @@ public class TotalTabFragment extends BaseFragment {
     }
 
     @Override
+    public String getTabTitle() {
+        return getArguments().getString(Constants.ARGUMENT_TAB_TITLE);
+    }
+
+    @Override
     public void initView(View view) {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
         currencyViewModel.getCurrencyList().observe(this, list -> adapter.setList(list));
     }

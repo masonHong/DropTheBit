@@ -44,6 +44,15 @@
             app:layout_constraintTop_toBottomOf="@id/app_bar"
             />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="#000"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/text_total"
+            />
+
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
             android:layout_width="0dp"
@@ -62,6 +71,15 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="#000"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tab_layout"
             />
     </android.support.constraint.ConstraintLayout>
 </android.support.design.widget.CoordinatorLayout>

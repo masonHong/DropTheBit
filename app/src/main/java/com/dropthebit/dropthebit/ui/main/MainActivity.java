@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.api.BithumbProvider;
+import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 
 import java.util.ArrayList;
@@ -48,10 +49,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
 
-    public int interval;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private List<Fragment> fragmentList = new ArrayList<>();
-    private List<String> titleList = new ArrayList<>();
+    private List<TabFragment> fragmentList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,10 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        fragmentList.add(InterestTabFragment.newInstance());
-        titleList.add(getString(R.string.interest_tab_title));
-        fragmentList.add(TotalTabFragment.newInstance());
-        titleList.add(getString(R.string.total_tab_title));
+        fragmentList.add(InterestTabFragment.newInstance(getString(R.string.interest_tab_title)));
+        fragmentList.add(TotalTabFragment.newInstance(getString(R.string.total_tab_title)));
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
         viewPager.setOffscreenPageLimit(2);
         tabLayout.setupWithViewPager(viewPager);
@@ -94,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return titleList.get(position);
+            return fragmentList.get(position).getTabTitle();
         }
     }
 }
