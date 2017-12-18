@@ -4,7 +4,7 @@ package com.dropthebit.dropthebit.model;
  * Created by mason-hong on 2017. 12. 14..
  * Bithumb 화폐 종류 및 키
  */
-public enum BithumbType {
+public enum CurrencyType {
     BitCoin("BTC"),
     BitCoinCache("BCH"),
     BitCoinGold("BTG"),
@@ -17,7 +17,7 @@ public enum BithumbType {
 
     public String key;
 
-    BithumbType(String key) {
+    CurrencyType(String key) {
         this.key = key;
     }
 }

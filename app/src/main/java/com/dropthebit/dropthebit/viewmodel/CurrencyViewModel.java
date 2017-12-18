@@ -10,6 +10,7 @@ import com.dropthebit.dropthebit.api.BithumbProvider;
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 import com.dropthebit.dropthebit.dto.BithumbCurrencyDTO;
 import com.dropthebit.dropthebit.model.CurrencyData;
+import com.dropthebit.dropthebit.model.CurrencyType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,23 +119,23 @@ public class CurrencyViewModel extends AndroidViewModel {
     private List<CurrencyData> makeList(BithumbAllDTO dto) {
         List<CurrencyData> ret = new ArrayList<>();
         BithumbCurrencyDTO target = dto.getData().getBTC();
-        ret.add(new CurrencyData(coinNames[0], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        ret.add(new CurrencyData(CurrencyType.BitCoin, coinNames[0], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
         target = dto.getData().getBCH();
-        ret.add(new CurrencyData(coinNames[1], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        ret.add(new CurrencyData(CurrencyType.BitCoinCache, coinNames[1], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
         target = dto.getData().getBTG();
-        ret.add(new CurrencyData(coinNames[2], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        ret.add(new CurrencyData(CurrencyType.BitCoinGold, coinNames[2], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
         target = dto.getData().getETH();
-        ret.add(new CurrencyData(coinNames[3], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        ret.add(new CurrencyData(CurrencyType.Etherium, coinNames[3], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
         target = dto.getData().getETC();
-        ret.add(new CurrencyData(coinNames[4], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        ret.add(new CurrencyData(CurrencyType.EtheriumClassic, coinNames[4], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
         target = dto.getData().getXRP();
-        ret.add(new CurrencyData(coinNames[5], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        ret.add(new CurrencyData(CurrencyType.Ripple, coinNames[5], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
         target = dto.getData().getQTUM();
-        ret.add(new CurrencyData(coinNames[6], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        ret.add(new CurrencyData(CurrencyType.Qtum, coinNames[6], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
         target = dto.getData().getLTC();
-        ret.add(new CurrencyData(coinNames[7], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        ret.add(new CurrencyData(CurrencyType.LiteCoin, coinNames[7], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
         target = dto.getData().getDASH();
-        ret.add(new CurrencyData(coinNames[8], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+        ret.add(new CurrencyData(CurrencyType.Dash, coinNames[8], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
         return ret;
     }
 }

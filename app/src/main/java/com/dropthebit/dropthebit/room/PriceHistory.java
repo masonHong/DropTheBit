@@ -1,6 +1,7 @@
 package com.dropthebit.dropthebit.room;
 
 import android.arch.persistence.room.Entity;
+import android.support.annotation.NonNull;
 
 /**
  * Created by mason-hong on 2017. 12. 18..
@@ -10,7 +11,10 @@ import android.arch.persistence.room.Entity;
         primaryKeys = {"name", "time"}
 )
 public class PriceHistory {
-    public String name;
+    @NonNull
+    public String name = "";
+
     public long time;
+
     public int price;
 }

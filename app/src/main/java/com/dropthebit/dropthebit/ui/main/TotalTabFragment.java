@@ -1,6 +1,7 @@
 package com.dropthebit.dropthebit.ui.main;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,10 +12,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
-import com.dropthebit.dropthebit.base.BaseFragment;
 import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
+import com.dropthebit.dropthebit.model.CurrencyType;
+import com.dropthebit.dropthebit.ui.detail.DetailActivity;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.text.NumberFormat;
@@ -69,12 +71,20 @@ public class TotalTabFragment extends TabFragment {
         @BindView(R.id.text_current_price_number)
         TextView textCurrentPrice;
 
+        private CurrencyType type;
+
         TotalViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), DetailActivity.class);
+                intent.putExtra(Constants.ARGUMENT_TYPE, type);
+                startActivity(intent);
+            });
         }
 
         void bind(CurrencyData data) {
+            this.type = data.getType();
             textCoinName.setText(data.getName());
             String price = data.getPrice();
             if (price.contains(".")) {

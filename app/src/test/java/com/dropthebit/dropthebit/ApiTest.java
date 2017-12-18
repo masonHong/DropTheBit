@@ -4,7 +4,7 @@ import com.dropthebit.dropthebit.api.BithumbProvider;
 import com.dropthebit.dropthebit.api.DTBProvider;
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 import com.dropthebit.dropthebit.dto.BithumbOneDTO;
-import com.dropthebit.dropthebit.model.BithumbType;
+import com.dropthebit.dropthebit.model.CurrencyType;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class ApiTest {
                 });
 
         BithumbProvider.getInstance()
-                .getPrice(BithumbType.Ripple)
+                .getPrice(CurrencyType.Ripple)
                 .subscribe(new Consumer<BithumbOneDTO>() {
                     @Override
                     public void accept(BithumbOneDTO bithumbDTO) throws Exception {
@@ -46,7 +46,7 @@ public class ApiTest {
     @Test
     public void serverTest() {
         DTBProvider.getInstance()
-                .getHistory(BithumbType.Ripple, 0)
+                .getHistory(CurrencyType.Ripple, 0)
                 .subscribe(dtbCoinDTO -> {
                 }, Throwable::printStackTrace);
     }

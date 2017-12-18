@@ -2,7 +2,7 @@ package com.dropthebit.dropthebit.api;
 
 import com.dropthebit.dropthebit.dto.BithumbAllDTO;
 import com.dropthebit.dropthebit.dto.BithumbOneDTO;
-import com.dropthebit.dropthebit.model.BithumbType;
+import com.dropthebit.dropthebit.model.CurrencyType;
 
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
@@ -50,7 +50,7 @@ public class BithumbProvider {
         return service.getAllPrices();
     }
 
-    public Observable<BithumbOneDTO> getPrice(BithumbType type) {
+    public Observable<BithumbOneDTO> getPrice(CurrencyType type) {
         return service.getPrice(type.key);
     }
 }
