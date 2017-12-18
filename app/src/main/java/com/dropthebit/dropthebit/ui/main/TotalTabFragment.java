@@ -59,7 +59,9 @@ public class TotalTabFragment extends TabFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
+        // 업데이트 될 때 마다 어뎁터에 적용
         currencyViewModel.getCurrencyList().observe(this, list -> adapter.setList(list));
     }
 
@@ -76,6 +78,7 @@ public class TotalTabFragment extends TabFragment {
         TotalViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            // 목록 클릭 시 자세히 보기 화면으로 이동
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), DetailActivity.class);
                 intent.putExtra(Constants.ARGUMENT_TYPE, type);
