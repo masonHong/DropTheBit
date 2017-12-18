@@ -31,7 +31,7 @@ public class ApiTest {
                 });
 
         BithumbProvider.getInstance()
-                .getPrice(BithumbType.BitCoin)
+                .getPrice(BithumbType.Ripple)
                 .subscribe(new Consumer<BithumbOneDTO>() {
                     @Override
                     public void accept(BithumbOneDTO bithumbDTO) throws Exception {
@@ -46,7 +46,7 @@ public class ApiTest {
     @Test
     public void serverTest() {
         DTBProvider.getInstance()
-                .getHistory(BithumbType.BitCoin, 0)
+                .getHistory(BithumbType.Ripple, 0)
                 .subscribe(dtbCoinDTO -> {
                 }, Throwable::printStackTrace);
     }
