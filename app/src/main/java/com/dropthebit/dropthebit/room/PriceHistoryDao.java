@@ -13,6 +13,6 @@ public interface PriceHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertPriceHistories(PriceHistory... priceHistories);
 
-    @Query("SELECT * FROM priceHistories WHERE :name")
+    @Query("SELECT * FROM priceHistories WHERE name = :name")
     PriceHistory[] loadAllHistories(String name);
 }

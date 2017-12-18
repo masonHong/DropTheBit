@@ -17,4 +17,18 @@ public class PriceHistory {
     public long time;
 
     public int price;
+
+    public PriceHistory() {
+    }
+
+    public PriceHistory(@NonNull String name, long time, int price) {
+        this.name = name;
+        this.time = time;
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return name + ": " + price + " (" + time + ")";
+    }
 }

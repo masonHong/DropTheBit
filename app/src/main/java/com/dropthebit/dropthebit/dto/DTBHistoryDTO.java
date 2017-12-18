@@ -4,17 +4,16 @@ package com.dropthebit.dropthebit.dto;
  * Created by mason-hong on 2017. 12. 18..
  */
 public class DTBHistoryDTO {
-    private String coin_name;
+    private String name;
     private int price;
-    private double volume;
-    private long timestamp;
+    private long time;
 
-    public String getCoin_name() {
-        return coin_name;
+    public String getName() {
+        return name;
     }
 
-    public void setCoin_name(String coin_name) {
-        this.coin_name = coin_name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getPrice() {
@@ -25,19 +24,11 @@ public class DTBHistoryDTO {
         this.price = price;
     }
 
-    public double getVolume() {
-        return volume;
+    public long getTime() {
+        return time;
     }
 
-    public void setVolume(double volume) {
-        this.volume = volume;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setTime(long time) {
+        this.time = time;
     }
 }
