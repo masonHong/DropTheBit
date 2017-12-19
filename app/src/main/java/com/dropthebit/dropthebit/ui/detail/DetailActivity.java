@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -54,25 +55,17 @@ public class DetailActivity extends AppCompatActivity {
 
         // 자세히 보여줄 타입
         type = (CurrencyType) getIntent().getSerializableExtra(Constants.ARGUMENT_TYPE);
+
         // SQLite 접근 객체
         priceHistoryDao = RoomProvider.getInstance(this)
                 .getDatabase()
                 .priceHistoryDao();
-        // 최신 차트 데이터 요청
-        Disposable disposable = DTBProvider.getInstance()
-                .getHistory(type, 0)
-                .subscribeOn(Schedulers.io())
-                .map(DTBCoinDTO::getData)
-                .subscribe(list -> {
-                            updateLocalDatabase(list);
-                            updateChart();
-                        },
-                        throwable -> {
-                            throwable.printStackTrace();
-                            finish();
-                        });
-        compositeDisposable.add(disposable);
+
+        updateLocalDbAsTime();
+
     }
+
+
 
     /**
      * 목록 업데이트
@@ -82,6 +75,39 @@ public class DetailActivity extends AppCompatActivity {
         for (DTBHistoryDTO dto : list) {
             priceHistoryDao.insertPriceHistories(new PriceHistory(dto.getName(), dto.getTime(), dto.getPrice()));
         }
+    }
+
+    private void updateLocalDbAsTime()
+    {
+        Disposable disposable = Observable.create((ObservableOnSubscribe<Long>) e ->
+        {
+            PriceHistory item =priceHistoryDao.loadRecentHistory(type.key);
+            if(item == null)
+                e.onNext(0L);
+            else
+                e.onNext(item.time);
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(time ->
+                {
+                    if(time!=0)
+                        time+=1; // 현재 시간 이후로 요청해야 하므로 1 더해준다.
+                    DTBProvider.getInstance()
+                            .getHistory(type, time)
+                            .subscribeOn(Schedulers.io())
+                            .map(DTBCoinDTO::getData)
+                            .subscribe(list -> {
+                                        updateLocalDatabase(list);
+                                        updateChart();
+                                    },
+                                    throwable -> {
+                                        throwable.printStackTrace();
+                                        finish();
+                                    });
+                });
+
+        compositeDisposable.add(disposable);
     }
 
     private void updateChart() {
