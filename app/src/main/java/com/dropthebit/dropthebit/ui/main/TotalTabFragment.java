@@ -55,6 +55,7 @@ public class TotalTabFragment extends TabFragment {
 
     @Override
     public void initView(View view) {
+        // 리사이클러뷰 설정
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
@@ -93,6 +94,7 @@ public class TotalTabFragment extends TabFragment {
             if (price.contains(".")) {
                 price = price.substring(0, price.indexOf("."));
             }
+            // 숫자에 콤마 붙이기
             price = NumberFormat.getInstance().format(Long.parseLong(price));
             textCurrentPrice.setText(price);
         }
@@ -111,7 +113,7 @@ public class TotalTabFragment extends TabFragment {
             holder.bind(list.get(position));
         }
 
-        public void setList(List<CurrencyData> list) {
+        void setList(List<CurrencyData> list) {
             this.list = list;
             notifyDataSetChanged();
         }

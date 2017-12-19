@@ -25,12 +25,9 @@ public class SplashActivity extends AppCompatActivity {
 
         disposable = Observable.just(0)
                 .delay(1000, TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(Integer integer) throws Exception {
-                        finish();
-                        startActivity(new Intent(getBaseContext(), MainActivity.class));
-                    }
+                .subscribe(integer -> {
+                    finish();
+                    startActivity(new Intent(getBaseContext(), MainActivity.class));
                 });
     }
 

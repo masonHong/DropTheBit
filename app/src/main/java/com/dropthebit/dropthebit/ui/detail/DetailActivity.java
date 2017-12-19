@@ -40,12 +40,14 @@ public class DetailActivity extends AppCompatActivity {
     private PriceHistory[] historyList;
     // 로컬 데이터 접근 권한
     private PriceHistoryDao priceHistoryDao;
+    // Observable 취소 용도
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        // 뷰 바인딩
         ButterKnife.bind(this);
 
         // 자세히 보여줄 타입
@@ -55,25 +57,38 @@ public class DetailActivity extends AppCompatActivity {
         priceHistoryDao = RoomProvider.getInstance(this)
                 .getDatabase()
                 .priceHistoryDao();
-
+        // 서버로부터 데이터 최신화
         updateLocalFromRemote();
-
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        compositeDisposable.dispose();
+    }
+
+    /**
+     * 서버로부터 데이터를 최신화 하는 함수
+     */
     private void updateLocalFromRemote() {
-        Disposable disposable = priceHistoryDao.loadRecentHistory(type.key)
+        Disposable disposable =
+                // 가장 최근 데이터 로드
+                priceHistoryDao.loadRecentHistory(type.key)
+                // 없을 경우 시간 0, 있을 경우 해당 시간 + 1 (해당 시간 이후를 검색하기 위해
                 .map(priceHistory ->
-                        priceHistory == null
-                        ? 0L
-                        : priceHistory.time + 1)
+                        priceHistory == null ? 0L : priceHistory.time + 1)
+                // 불러온 시간으로 서버에 데이터 요청
                 .flatMap(time ->
-                        DTBProvider.getInstance()
-                                .getHistory(type, time))
+                        DTBProvider.getInstance().getHistory(type, time))
+                // data만 필요함
                 .map(DTBCoinDTO::getData)
+                // 시작 스케줄러 io
                 .subscribeOn(Schedulers.io())
                 .subscribe(list ->
                 {
+                    // 불러온 목록으로 데이터베이스 업데이트
                     updateLocalDatabase(list);
+                    // 차트 업데이트
                     updateChart();
 
                 }, throwable -> {
@@ -85,8 +100,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     /**
-     * 목록 업데이트
-     *
+     * 데이터베이스 목록 업데이트
      * @param list 업데이트할 데이터
      */
     private void updateLocalDatabase(List<DTBHistoryDTO> list) {
@@ -95,6 +109,9 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 차트에 데이터를 보여주는 함수
+     */
     private void updateChart() {
         // 로컬에 있는 데이터 기반으로 차트 업데이트 요청
         Disposable disposable = priceHistoryDao.loadAllHistories(type.key)
@@ -103,28 +120,27 @@ public class DetailActivity extends AppCompatActivity {
                 .subscribe(list -> {
                     if (list.length > 0) {
                         historyList = list;
-                        // 1분
-                        final int minute = 1000 * 60;
+                        final int minute = 1000 * 60;   // 1분
                         List<Entry> entries = new ArrayList<>();
                         for (PriceHistory history : historyList) {
                             // 10분 단위로 x 좌표 찍기, y 좌표는 price
                             entries.add(new Entry(history.time / (10 * minute), history.price));
                         }
+                        // 데이터 설정
                         LineDataSet dataSet = new LineDataSet(entries, type.key);
                         LineData lineData = new LineData(dataSet);
+                        // 데이터 표시 제거
                         lineData.setValueFormatter((value, entry, dataSetIndex, viewPortHandler) -> "");
                         lineChart.setData(lineData);
+                        // 보이는 데이터 최대 50개
                         lineChart.setVisibleXRangeMaximum(50);
+                        // 차트 맨 끝 으로 이동
                         lineChart.moveViewToX(entries.get(entries.size() - 1).getX());
+                        // 그리기
                         lineChart.invalidate();
                     }
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        compositeDisposable.dispose();
-    }
 }
