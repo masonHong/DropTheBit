@@ -1,7 +1,6 @@
 package com.dropthebit.dropthebit.api;
 
-import com.dropthebit.dropthebit.dto.BithumbAllDTO;
-import com.dropthebit.dropthebit.dto.BithumbOneDTO;
+import com.dropthebit.dropthebit.dto.DTBCoinDTO;
 import com.dropthebit.dropthebit.model.CurrencyType;
 
 import io.reactivex.Observable;
@@ -12,26 +11,25 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by mason-hong on 2017. 12. 14..
- * Bithumb API 제공자
+ * Created by mason-hong on 2017. 12. 18..
  */
-public class BithumbProvider {
-    private static final String BASE_URL = "https://api.bithumb.com/";
-    private static BithumbProvider instance;
-    private BithumbService service;
+public class DTBProvider {
+    private static final String BASE_URL = "http://52.79.231.100:5252/";
+    private static DTBProvider instance;
+    private DTBService service;
 
-    public static BithumbProvider getInstance() {
+    public static DTBProvider getInstance() {
         if (instance == null) {
-            synchronized (BithumbProvider.class) {
+            synchronized (DTBProvider.class) {
                 if (instance == null) {
-                    instance = new BithumbProvider();
+                    instance = new DTBProvider();
                 }
             }
         }
         return instance;
     }
 
-    private BithumbProvider() {
+    private DTBProvider() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
@@ -43,14 +41,10 @@ public class BithumbProvider {
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
                 .build();
-        service = retrofit.create(BithumbService.class);
+        service = retrofit.create(DTBService.class);
     }
 
-    public Observable<BithumbAllDTO> getAllPrices() {
-        return service.getAllPrices();
-    }
-
-    public Observable<BithumbOneDTO> getPrice(CurrencyType type) {
-        return service.getPrice(type.key);
+    public Observable<DTBCoinDTO> getHistory(CurrencyType type, long date) {
+        return service.getHistory(type.key, date);
     }
 }

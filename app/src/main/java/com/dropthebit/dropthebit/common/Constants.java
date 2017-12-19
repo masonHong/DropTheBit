@@ -5,4 +5,6 @@ package com.dropthebit.dropthebit.common;
  */
 public class Constants {
     public final static String ARGUMENT_INTERVAL = "interval";
+    public final static String ARGUMENT_TAB_TITLE = "tabTitle";
+    public final static String ARGUMENT_TYPE = "type";
 }

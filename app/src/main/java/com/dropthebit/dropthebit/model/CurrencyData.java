@@ -4,6 +4,7 @@ package com.dropthebit.dropthebit.model;
  * Created by mason-hong on 2017. 12. 16..
  */
 public class CurrencyData {
+    private CurrencyType type;
     private String name;
     private String price;
     private String maxPrice;
@@ -12,11 +13,20 @@ public class CurrencyData {
     public CurrencyData() {
     }
 
-    public CurrencyData(String name, String price, String maxPrice, String minPrice) {
+    public CurrencyData(CurrencyType type, String name, String price, String maxPrice, String minPrice) {
+        this.type = type;
         this.name = name;
         this.price = price;
         this.maxPrice = maxPrice;
         this.minPrice = minPrice;
+    }
+
+    public CurrencyType getType() {
+        return type;
+    }
+
+    public void setType(CurrencyType type) {
+        this.type = type;
     }
 
     public String getName() {
