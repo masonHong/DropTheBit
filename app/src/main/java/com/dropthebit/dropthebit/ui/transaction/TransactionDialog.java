@@ -1,11 +1,19 @@
 package com.dropthebit.dropthebit.ui.transaction;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.common.Constants;
@@ -20,18 +28,30 @@ public class TransactionDialog extends DialogFragment {
     public static final int TYPE_SELL = 1;
 
     public static TransactionDialog newInstance(int type) {
-        TransactionDialog fragment = new TransactionDialog();
+        TransactionDialog dialog = new TransactionDialog();
         Bundle args = new Bundle();
         args.putInt(Constants.ARGUMENT_TYPE, type);
-        fragment.setArguments(args);
-        return fragment;
+        dialog.setArguments(args);
+        return dialog;
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_transaction, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_transaction, null);
         ButterKnife.bind(this, view);
-        return view;
+        return new AlertDialog.Builder(getContext())
+                .setView(view)
+                .create();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getDialog().getWindow() != null) {
+            WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
+            params.width = WindowManager.LayoutParams.MATCH_PARENT;
+            getDialog().getWindow().setGravity(Gravity.BOTTOM);
+        }
     }
 }
