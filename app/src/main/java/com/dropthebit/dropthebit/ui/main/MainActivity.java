@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         compositeDisposable.dispose();
     }
 
+
     private class ViewPagerAdapter extends FragmentPagerAdapter {
 
         ViewPagerAdapter(FragmentManager fm) {

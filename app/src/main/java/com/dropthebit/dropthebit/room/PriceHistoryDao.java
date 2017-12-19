@@ -15,4 +15,7 @@ public interface PriceHistoryDao {
 
     @Query("SELECT * FROM priceHistories WHERE name = :name")
     PriceHistory[] loadAllHistories(String name);
+
+    @Query("select * from priceHistories where name = :name order by time desc limit 1")
+    PriceHistory loadRecentHistory(String name);
 }

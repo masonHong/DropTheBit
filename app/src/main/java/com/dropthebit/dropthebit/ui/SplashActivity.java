@@ -10,6 +10,7 @@ import com.dropthebit.dropthebit.ui.main.MainActivity;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
