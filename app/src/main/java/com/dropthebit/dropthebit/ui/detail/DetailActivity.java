@@ -13,13 +13,9 @@ import com.dropthebit.dropthebit.room.PriceHistory;
 import com.dropthebit.dropthebit.room.PriceHistoryDao;
 import com.dropthebit.dropthebit.room.RoomProvider;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +24,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -61,53 +56,44 @@ public class DetailActivity extends AppCompatActivity {
                 .getDatabase()
                 .priceHistoryDao();
 
-        updateLocalDbAsTime();
+        updateLocalFromRemote();
 
     }
 
+    private void updateLocalFromRemote() {
+        Disposable disposable = Observable.create((ObservableOnSubscribe<PriceHistory>) e ->
+                e.onNext(priceHistoryDao.loadRecentHistory(type.key)))
+                .map(priceHistory ->
+                        priceHistory == null
+                        ? 0L
+                        : priceHistory.time + 1)
+                .flatMap(time ->
+                        DTBProvider.getInstance()
+                                .getHistory(type, time))
+                .map(DTBCoinDTO::getData)
+                .subscribeOn(Schedulers.io())
+                .subscribe(list ->
+                {
+                    updateLocalDatabase(list);
+                    updateChart();
 
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    finish();
+                });
+
+        compositeDisposable.add(disposable);
+    }
 
     /**
      * 목록 업데이트
+     *
      * @param list 업데이트할 데이터
      */
     private void updateLocalDatabase(List<DTBHistoryDTO> list) {
         for (DTBHistoryDTO dto : list) {
             priceHistoryDao.insertPriceHistories(new PriceHistory(dto.getName(), dto.getTime(), dto.getPrice()));
         }
-    }
-
-    private void updateLocalDbAsTime()
-    {
-        Disposable disposable = Observable.create((ObservableOnSubscribe<Long>) e ->
-        {
-            PriceHistory item =priceHistoryDao.loadRecentHistory(type.key);
-            if(item == null)
-                e.onNext(0L);
-            else
-                e.onNext(item.time);
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(time ->
-                {
-                    if(time!=0)
-                        time+=1; // 현재 시간 이후로 요청해야 하므로 1 더해준다.
-                    DTBProvider.getInstance()
-                            .getHistory(type, time)
-                            .subscribeOn(Schedulers.io())
-                            .map(DTBCoinDTO::getData)
-                            .subscribe(list -> {
-                                        updateLocalDatabase(list);
-                                        updateChart();
-                                    },
-                                    throwable -> {
-                                        throwable.printStackTrace();
-                                        finish();
-                                    });
-                });
-
-        compositeDisposable.add(disposable);
     }
 
     private void updateChart() {
@@ -130,6 +116,7 @@ public class DetailActivity extends AppCompatActivity {
                         lineData.setValueFormatter((value, entry, dataSetIndex, viewPortHandler) -> "");
                         lineChart.setData(lineData);
                         lineChart.setVisibleXRangeMaximum(50);
+                        lineChart.moveViewToX(entries.get(entries.size() - 1).getX());
                         lineChart.invalidate();
                     }
                 }, Throwable::printStackTrace);
