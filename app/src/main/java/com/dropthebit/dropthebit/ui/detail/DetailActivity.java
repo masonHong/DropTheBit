@@ -12,6 +12,7 @@ import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.room.PriceHistory;
 import com.dropthebit.dropthebit.room.PriceHistoryDao;
 import com.dropthebit.dropthebit.room.RoomProvider;
+import com.dropthebit.dropthebit.ui.transaction.TransactionDialog;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -65,6 +67,18 @@ public class DetailActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         compositeDisposable.dispose();
+    }
+
+    @OnClick(R.id.button_buy)
+    void onClickBuy() {
+        TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_BUY);
+        dialog.show(getSupportFragmentManager(), Constants.TAG_TRANSACTION);
+    }
+
+    @OnClick(R.id.button_sell)
+    void onClickSell() {
+        TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_SELL);
+        dialog.show(getSupportFragmentManager(), Constants.TAG_TRANSACTION);
     }
 
     /**

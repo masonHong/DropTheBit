@@ -6,9 +6,29 @@
     android:layout_height="match_parent"
     tools:context="com.dropthebit.dropthebit.ui.detail.DetailActivity">
 
+    <Button
+        android:id="@+id/button_buy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="매수"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/button_sell"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/button_sell"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="매도"
+        app:layout_constraintLeft_toRightOf="@id/button_buy"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="300dp"
-        />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_buy" />
 </android.support.constraint.ConstraintLayout>

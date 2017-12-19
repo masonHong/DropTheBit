@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dropthebit.dropthebit.R;
+import com.dropthebit.dropthebit.common.Constants;
 
 import butterknife.ButterKnife;
 
@@ -15,10 +16,13 @@ import butterknife.ButterKnife;
  * Created by mason-hong on 2017. 12. 16..
  */
 public class TransactionDialog extends DialogFragment {
+    public static final int TYPE_BUY = 0;
+    public static final int TYPE_SELL = 1;
 
-    public static TransactionDialog newInstance() {
+    public static TransactionDialog newInstance(int type) {
         TransactionDialog fragment = new TransactionDialog();
         Bundle args = new Bundle();
+        args.putInt(Constants.ARGUMENT_TYPE, type);
         fragment.setArguments(args);
         return fragment;
     }
