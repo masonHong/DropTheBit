@@ -2,6 +2,7 @@ package com.dropthebit.dropthebit.api;
 
 import com.dropthebit.dropthebit.dto.DTBCoinDTO;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -11,5 +12,5 @@ import retrofit2.http.Path;
  */
 public interface DTBService {
     @GET("api/coin/{currency}/{date}")
-    Observable<DTBCoinDTO> getHistory(@Path("currency") String currency, @Path("date") long date);
+    Flowable<DTBCoinDTO> getHistory(@Path("currency") String currency, @Path("date") long date);
 }

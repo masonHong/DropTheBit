@@ -3,6 +3,7 @@ package com.dropthebit.dropthebit.api;
 import com.dropthebit.dropthebit.dto.DTBCoinDTO;
 import com.dropthebit.dropthebit.model.CurrencyType;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -44,7 +45,7 @@ public class DTBProvider {
         service = retrofit.create(DTBService.class);
     }
 
-    public Observable<DTBCoinDTO> getHistory(CurrencyType type, long date) {
+    public Flowable<DTBCoinDTO> getHistory(CurrencyType type, long date) {
         return service.getHistory(type.key, date);
     }
 }

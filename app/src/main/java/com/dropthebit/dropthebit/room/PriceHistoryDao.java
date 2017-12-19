@@ -5,6 +5,8 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import io.reactivex.Flowable;
+
 /**
  * Created by mason-hong on 2017. 12. 18..
  */
@@ -14,8 +16,8 @@ public interface PriceHistoryDao {
     void insertPriceHistories(PriceHistory... priceHistories);
 
     @Query("SELECT * FROM priceHistories WHERE name = :name")
-    PriceHistory[] loadAllHistories(String name);
+    Flowable<PriceHistory[]> loadAllHistories(String name);
 
     @Query("select * from priceHistories where name = :name order by time desc limit 1")
-    PriceHistory loadRecentHistory(String name);
+    Flowable<PriceHistory> loadRecentHistory(String name);
 }

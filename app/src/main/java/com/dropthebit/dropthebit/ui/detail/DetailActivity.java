@@ -61,8 +61,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void updateLocalFromRemote() {
-        Disposable disposable = Observable.create((ObservableOnSubscribe<PriceHistory>) e ->
-                e.onNext(priceHistoryDao.loadRecentHistory(type.key)))
+        Disposable disposable = priceHistoryDao.loadRecentHistory(type.key)
                 .map(priceHistory ->
                         priceHistory == null
                         ? 0L
@@ -98,7 +97,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void updateChart() {
         // 로컬에 있는 데이터 기반으로 차트 업데이트 요청
-        Disposable disposable = Observable.create((ObservableOnSubscribe<PriceHistory[]>) e -> e.onNext(priceHistoryDao.loadAllHistories(type.key)))
+        Disposable disposable = priceHistoryDao.loadAllHistories(type.key)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list -> {
