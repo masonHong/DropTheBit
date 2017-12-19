@@ -13,9 +13,13 @@ import com.dropthebit.dropthebit.room.PriceHistory;
 import com.dropthebit.dropthebit.room.PriceHistoryDao;
 import com.dropthebit.dropthebit.room.RoomProvider;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +101,9 @@ public class DetailActivity extends AppCompatActivity {
                         }
                         LineDataSet dataSet = new LineDataSet(entries, type.key);
                         LineData lineData = new LineData(dataSet);
+                        lineData.setValueFormatter((value, entry, dataSetIndex, viewPortHandler) -> "");
                         lineChart.setData(lineData);
+                        lineChart.setVisibleXRangeMaximum(50);
                         lineChart.invalidate();
                     }
                 }, Throwable::printStackTrace);
