@@ -15,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by mason-hong on 2017. 12. 14..
  * Bithumb API 제공자
  */
+
 public class BithumbProvider {
     private static final String BASE_URL = "https://api.bithumb.com/";
     private static BithumbProvider instance;

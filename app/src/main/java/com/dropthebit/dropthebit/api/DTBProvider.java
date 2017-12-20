@@ -14,6 +14,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by mason-hong on 2017. 12. 18..
  */
+
+
 public class DTBProvider {
     private static final String BASE_URL = "http://52.79.231.100:5252/";
     private static DTBProvider instance;

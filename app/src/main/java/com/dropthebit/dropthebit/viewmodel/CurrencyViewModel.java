@@ -43,6 +43,7 @@ public class CurrencyViewModel extends AndroidViewModel {
         super(application);
         // 프래그먼트가 종료되었을 때 메모리 해제를 위해 저장하며
         // interval을 사용해서 주기적으로 호출 할 수 있도록 한다
+
         coinNames = application.getResources().getStringArray(R.array.coinNames);
         disposableTotal = Observable.interval(0, 3000, TimeUnit.MILLISECONDS)
                 .flatMap(aLong -> {

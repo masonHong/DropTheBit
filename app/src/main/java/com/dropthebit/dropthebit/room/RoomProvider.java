@@ -26,7 +26,10 @@ public class RoomProvider {
                 context,
                 LocalDatabase.class,
                 "local-database")
+                .fallbackToDestructiveMigration()
                 .build();
+        //데이터베이스 스키마 바꾸는 과정에서 버전업때문에 migration 충돌 났는데 fallbackTo ~ 이거 넣어서 테이블 다 삭제하도록함
+        // 원래대로 유지할라면 addMigration 해서 버전 업 해줘야댄대
     }
 
     public LocalDatabase getDatabase() {
