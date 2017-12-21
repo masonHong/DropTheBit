@@ -20,6 +20,8 @@ import com.dropthebit.dropthebit.ui.detail.DetailActivity;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -63,7 +65,11 @@ public class TotalTabFragment extends TabFragment {
         // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
         // 업데이트 될 때 마다 어뎁터에 적용
-        currencyViewModel.getCurrencyList().observe(this, list -> adapter.setList(list));
+        currencyViewModel.getCurrencyList().observe(this, map -> {
+            if (map != null) {
+                adapter.setList(new ArrayList<>(map.values()));
+            }
+        });
     }
 
     class TotalViewHolder extends RecyclerView.ViewHolder {

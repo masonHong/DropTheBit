@@ -86,29 +86,15 @@ public class InterestTabFragment extends TabFragment {
         // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
         // 업데이트 될 때 마다 어뎁터에 적용 후 관심코인만 리스트에 넣어서 set
-        currencyViewModel.getCurrencyList().observe(this, list ->
-                adapter.setList(filterUnInterest(list)));
-
-        /* DB에 넣는거 테스트
-        Observable.just(0)
-                .observeOn(Schedulers.io())
-                .subscribe(integer ->
-                {
-                   interestCoinDao.insertIntersetCoin(new InterestCoin("BitCoin"));
-                   interestCoinDao.insertIntersetCoin(new InterestCoin("BitCoinCache"));
-                });
-                */
-    }
-
-    // 디비에 있는 관심목록이랑 일치하는 것만 리스트에 넣음.
-    public List<CurrencyData> filterUnInterest(List<CurrencyData> list) {
-        List<CurrencyData> result = new ArrayList<>();
-        for (CurrencyData data : list) {
-            if (interestCoins.contains(data.getName())) {
-                result.add(data);
+        currencyViewModel.getCurrencyList().observe(this, map -> {
+            List<CurrencyData> list = new ArrayList<>();
+            for (String name : interestCoins) {
+                if (map != null && map.containsKey(name)) {
+                    list.add(map.get(name));
+                }
             }
-        }
-        return result;
+            adapter.setList(list);
+        });
     }
 
     @Override

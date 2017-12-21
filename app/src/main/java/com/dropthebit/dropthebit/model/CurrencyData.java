@@ -25,39 +25,19 @@ public class CurrencyData {
         return type;
     }
 
-    public void setType(CurrencyType type) {
-        this.type = type;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
     public String getMaxPrice() {
         return maxPrice;
     }
 
-    public void setMaxPrice(String maxPrice) {
-        this.maxPrice = maxPrice;
-    }
-
     public String getMinPrice() {
         return minPrice;
-    }
-
-    public void setMinPrice(String minPrice) {
-        this.minPrice = minPrice;
     }
 }
