@@ -6,19 +6,16 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
-import com.dropthebit.dropthebit.room.InterestCoin;
 import com.dropthebit.dropthebit.room.InterestCoinDao;
 import com.dropthebit.dropthebit.room.RoomProvider;
 import com.dropthebit.dropthebit.ui.detail.DetailActivity;
@@ -26,12 +23,12 @@ import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -41,15 +38,15 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class InterestTabFragment extends TabFragment {
 
-    InterestCoinDao interestCoinDao;
+    private InterestCoinDao interestCoinDao;
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-
     private Disposable disposable;
 
-    private IntersetListAdapter adapter = new IntersetListAdapter();
+    private InterestListAdapter adapter = new InterestListAdapter();
+    private List<String> interestCoins = Collections.emptyList();
 
     public static InterestTabFragment newInstance(String tabTitle) {
         InterestTabFragment fragment = new InterestTabFragment();
@@ -70,15 +67,27 @@ public class InterestTabFragment extends TabFragment {
     }
 
 
-
     @Override
     public void initView(View view) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         interestCoinDao = RoomProvider.getInstance(getContext()).getDatabase().intersetCoinDao();
 
+        disposable = interestCoinDao.loadAllInterestCoins()
+                .subscribeOn(Schedulers.io())
+                .flatMap(Flowable::fromArray)
+                .map(coin -> coin.name)
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> this.interestCoins = list);
+
+        // 실시간 코인 시세 뷰 모델
+        CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
+        // 업데이트 될 때 마다 어뎁터에 적용 후 관심코인만 리스트에 넣어서 set
+        currencyViewModel.getCurrencyList().observe(this, list ->
+                adapter.setList(filterUnInterest(list)));
 
         /* DB에 넣는거 테스트
         Observable.just(0)
@@ -89,49 +98,34 @@ public class InterestTabFragment extends TabFragment {
                    interestCoinDao.insertIntersetCoin(new InterestCoin("BitCoinCache"));
                 });
                 */
-
-        disposable = interestCoinDao.loadAllInterestCoins()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(interestCoins -> {
-                    // 실시간 코인 시세 뷰 모델
-                    CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
-                    // 업데이트 될 때 마다 어뎁터에 적용 후 관심코인만 리스트에 넣어서 set
-                    currencyViewModel.getCurrencyList().observe(this, list ->
-                    {
-                        adapter.setList(filterUnInterest(list,interestCoins));
-                    });
-                });
-
-
     }
 
     // 디비에 있는 관심목록이랑 일치하는 것만 리스트에 넣음.
-    public List<CurrencyData> filterUnInterest(List<CurrencyData> list , InterestCoin[] interest)
-    {
+    public List<CurrencyData> filterUnInterest(List<CurrencyData> list) {
         List<CurrencyData> result = new ArrayList<>();
-        for(int i=0;i<list.size();i++)
-        {
-            for(int j=0;j<interest.length;j++)
-            {
-                if(list.get(i).getType().toString().equals(interest[j].name)){
-                    result.add(list.get(i));
-                }
+        for (CurrencyData data : list) {
+            if (interestCoins.contains(data.getName())) {
+                result.add(data);
             }
         }
-
         return result;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (disposable != null) {
+            disposable.dispose();
+        }
+    }
 
-    class IntersetListAdapter extends RecyclerView.Adapter<IntersetListAdapter.InterestViewHolder>
-    {
+    class InterestListAdapter extends RecyclerView.Adapter<InterestListAdapter.InterestViewHolder> {
 
         private List<CurrencyData> list = null;
 
         @Override
         public InterestViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new InterestViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.viewholder_total_item, parent,false));
+            return new InterestViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.viewholder_total_item, parent, false));
         }
 
         @Override
@@ -141,7 +135,7 @@ public class InterestTabFragment extends TabFragment {
 
         @Override
         public int getItemCount() {
-            return list == null? 0 : list.size();
+            return list == null ? 0 : list.size();
         }
 
         void setList(List<CurrencyData> list) {
@@ -150,9 +144,7 @@ public class InterestTabFragment extends TabFragment {
         }
 
 
-
-        class InterestViewHolder extends RecyclerView.ViewHolder
-        {
+        class InterestViewHolder extends RecyclerView.ViewHolder {
             @BindView(R.id.text_coin_name)
             TextView textCoinName;
 
@@ -164,13 +156,14 @@ public class InterestTabFragment extends TabFragment {
             public InterestViewHolder(View itemView) {
                 super(itemView);
 
-                ButterKnife.bind(this,itemView);
+                ButterKnife.bind(this, itemView);
                 itemView.setOnClickListener(v -> {
                     Intent intent = new Intent(getContext(), DetailActivity.class);
                     intent.putExtra(Constants.ARGUMENT_TYPE, type);
                     startActivity(intent);
                 });
             }
+
             void bind(CurrencyData data) {
                 this.type = data.getType();
                 textCoinName.setText(data.getName());
