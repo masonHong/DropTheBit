@@ -16,8 +16,8 @@ import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
-import com.dropthebit.dropthebit.room.InterestCoinDao;
-import com.dropthebit.dropthebit.room.RoomProvider;
+import com.dropthebit.dropthebit.provider.room.InterestCoinDao;
+import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.ui.detail.DetailActivity;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 

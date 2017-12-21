@@ -1,4 +1,4 @@
-package com.dropthebit.dropthebit.room;
+package com.dropthebit.dropthebit.provider.room;
 
 import android.arch.persistence.room.Entity;
 import android.support.annotation.NonNull;

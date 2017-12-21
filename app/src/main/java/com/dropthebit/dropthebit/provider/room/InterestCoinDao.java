@@ -1,4 +1,4 @@
-package com.dropthebit.dropthebit.room;
+package com.dropthebit.dropthebit.provider.room;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
