@@ -49,4 +49,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     // MP Chart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    // Timber
+    implementation 'com.jakewharton.timber:timber:4.6.0'
 }
