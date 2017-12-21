@@ -23,7 +23,6 @@ import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -46,7 +45,7 @@ public class InterestTabFragment extends TabFragment {
     private Disposable disposable;
 
     private InterestListAdapter adapter = new InterestListAdapter();
-    private List<String> interestCoins = Collections.emptyList();
+    private List<String> interestCoins = new ArrayList<>();
 
     public static InterestTabFragment newInstance(String tabTitle) {
         InterestTabFragment fragment = new InterestTabFragment();
@@ -79,9 +78,8 @@ public class InterestTabFragment extends TabFragment {
                 .subscribeOn(Schedulers.io())
                 .flatMap(Flowable::fromArray)
                 .map(coin -> coin.name)
-                .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(list -> this.interestCoins = list);
+                .subscribe(name -> interestCoins.add(name), Throwable::printStackTrace);
 
         // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);

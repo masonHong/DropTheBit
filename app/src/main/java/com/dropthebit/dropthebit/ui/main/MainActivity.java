@@ -13,20 +13,13 @@ import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.base.TabFragment;
-import com.dropthebit.dropthebit.model.CurrencyType;
-import com.dropthebit.dropthebit.provider.pref.CommonPref;
-import com.dropthebit.dropthebit.provider.room.InterestCoin;
-import com.dropthebit.dropthebit.provider.room.RoomProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by mason-hong on 2017. 12. 13..
@@ -53,18 +46,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        if (CommonPref.getInstance(this).isFirstStart()) {
-            Disposable disposable = Observable.just(RoomProvider.getInstance(this).getDatabase().intersetCoinDao())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(dao -> {
-                        dao.insertIntersetCoin(new InterestCoin(CurrencyType.BitCoin.key));
-                        dao.insertIntersetCoin(new InterestCoin(CurrencyType.Etherium.key));
-                        dao.insertIntersetCoin(new InterestCoin(CurrencyType.Ripple.key));
-                        CommonPref.getInstance(this).setFirstStart(false);
-                    }, Throwable::printStackTrace);
-            compositeDisposable.add(disposable);
-        }
 
         setSupportActionBar(toolbar);
         // 탭 리스트 추가

@@ -15,9 +15,9 @@ import io.reactivex.Flowable;
 @Dao
 public interface InterestCoinDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertIntersetCoin(InterestCoin interestCoin);
+    void insertInterestCoin(InterestCoin interestCoin);
 
-    @Query("select * from intersetCoin")
+    @Query("SELECT * FROM interestCoin")
     Flowable<InterestCoin[]> loadAllInterestCoins();
 
     @Delete

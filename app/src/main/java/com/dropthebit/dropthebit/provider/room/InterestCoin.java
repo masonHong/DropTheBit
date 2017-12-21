@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
  */
 
 @Entity(
-        tableName = "intersetCoin",
+        tableName = "interestCoin",
         primaryKeys = "name"
 )
 
