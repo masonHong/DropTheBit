@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -100,11 +101,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
+        android:text="예상금액"
         android:textColor="#888"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_amount"
-        tools:text="예상금액" />
+        app:layout_constraintTop_toBottomOf="@id/edit_amount" />
 
     <EditText
         android:id="@+id/edit_predict_price"
@@ -155,6 +156,7 @@
         android:id="@+id/progress_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:theme="@style/Widget.AppCompat.ProgressBar.Horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_time_help" />

@@ -13,11 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.common.Constants;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,6 +28,11 @@ import butterknife.ButterKnife;
 public class TransactionDialog extends DialogFragment {
     public static final int TYPE_BUY = 0;
     public static final int TYPE_SELL = 1;
+
+    @BindView(R.id.text_name)
+    TextView textName;
+
+    private int type;
 
     public static TransactionDialog newInstance(int type) {
         TransactionDialog dialog = new TransactionDialog();
@@ -40,6 +47,7 @@ public class TransactionDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_transaction, null);
         ButterKnife.bind(this, view);
+        initView();
         return new AlertDialog.Builder(getContext())
                 .setView(view)
                 .create();
@@ -53,5 +61,11 @@ public class TransactionDialog extends DialogFragment {
             params.width = WindowManager.LayoutParams.MATCH_PARENT;
             getDialog().getWindow().setGravity(Gravity.BOTTOM);
         }
+    }
+
+    private void initView() {
+        type = getArguments().getInt(Constants.ARGUMENT_TYPE, 0);
+        String[] names = getResources().getStringArray(R.array.coinNames);
+        textName.setText(names[type]);
     }
 }
