@@ -1,6 +1,8 @@
 package com.dropthebit.dropthebit.ui.transaction;
 
 import android.app.Dialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +20,12 @@ import android.widget.Toast;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.common.Constants;
+import com.dropthebit.dropthebit.model.CurrencyData;
+import com.dropthebit.dropthebit.model.CurrencyType;
+import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
+
+import java.text.NumberFormat;
+import java.util.LinkedHashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +40,15 @@ public class TransactionDialog extends DialogFragment {
     @BindView(R.id.text_name)
     TextView textName;
 
+    @BindView(R.id.text_symbol)
+    TextView textSymbol;
+
+    @BindView(R.id.text_price)
+    TextView textPrice;
+
     private int type;
+    private String key;
+    private CurrencyViewModel currencyViewModel;
 
     public static TransactionDialog newInstance(int type) {
         TransactionDialog dialog = new TransactionDialog();
@@ -65,7 +81,17 @@ public class TransactionDialog extends DialogFragment {
 
     private void initView() {
         type = getArguments().getInt(Constants.ARGUMENT_TYPE, 0);
+        key = CurrencyType.values()[type].key;
         String[] names = getResources().getStringArray(R.array.coinNames);
         textName.setText(names[type]);
+        textSymbol.setText(key);
+        currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
+        currencyViewModel.getCurrencyList()
+                .observe(this, map -> {
+                    if (map.containsKey(key)) {
+                        NumberFormat numberFormat = NumberFormat.getNumberInstance();
+                        textPrice.setText(numberFormat.format(Long.parseLong(map.get(key).getPrice())));
+                    }
+                });
     }
 }
