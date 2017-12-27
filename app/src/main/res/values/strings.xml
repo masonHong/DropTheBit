@@ -2,4 +2,8 @@
     <string name="app_name">DropTheBit</string>
     <string name="interest_tab_title">관심종목</string>
     <string name="total_tab_title">전체</string>
+    <string name="amount_of_buying">매수량</string>
+    <string name="amount_of_selling">매도량</string>
+    <string name="buying">매수</string>
+    <string name="selling">매도</string>
 </resources>

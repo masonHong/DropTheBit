@@ -69,13 +69,13 @@ public class DetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_buy)
     void onClickBuy() {
-        TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_BUY);
+        TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_BUY, type);
         dialog.show(getSupportFragmentManager(), Constants.TAG_TRANSACTION);
     }
 
     @OnClick(R.id.button_sell)
     void onClickSell() {
-        TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_SELL);
+        TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_SELL, type);
         dialog.show(getSupportFragmentManager(), Constants.TAG_TRANSACTION);
     }
 

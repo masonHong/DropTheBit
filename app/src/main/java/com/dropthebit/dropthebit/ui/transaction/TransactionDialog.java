@@ -1,31 +1,26 @@
 package com.dropthebit.dropthebit.ui.transaction;
 
 import android.app.Dialog;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.common.Constants;
-import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.NumberFormat;
-import java.util.LinkedHashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +32,14 @@ public class TransactionDialog extends DialogFragment {
     public static final int TYPE_BUY = 0;
     public static final int TYPE_SELL = 1;
 
+    // 원하는 값만 사용하도록 경고해주는 용도
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({TYPE_BUY, TYPE_SELL})
+    public @interface TransactionType {}
+
+    @BindView(R.id.text_title)
+    TextView textTitle;
+
     @BindView(R.id.text_name)
     TextView textName;
 
@@ -46,14 +49,20 @@ public class TransactionDialog extends DialogFragment {
     @BindView(R.id.text_price)
     TextView textPrice;
 
-    private int type;
-    private String key;
+    @BindView(R.id.text_amount)
+    TextView textAmount;
+
+    @TransactionType
+    private int transactionType;
+
+    private CurrencyType currencyType;
     private CurrencyViewModel currencyViewModel;
 
-    public static TransactionDialog newInstance(int type) {
+    public static TransactionDialog newInstance(@TransactionType int transactionType, CurrencyType currencyType) {
         TransactionDialog dialog = new TransactionDialog();
         Bundle args = new Bundle();
-        args.putInt(Constants.ARGUMENT_TYPE, type);
+        args.putInt(Constants.ARGUMENT_TYPE, transactionType);
+        args.putSerializable(Constants.ARGUMENT_CURRENCY_TYPE, currencyType);
         dialog.setArguments(args);
         return dialog;
     }
@@ -80,18 +89,28 @@ public class TransactionDialog extends DialogFragment {
     }
 
     private void initView() {
-        type = getArguments().getInt(Constants.ARGUMENT_TYPE, 0);
-        key = CurrencyType.values()[type].key;
+        transactionType = getArguments().getInt(Constants.ARGUMENT_TYPE, 0);
+        currencyType = (CurrencyType) getArguments().getSerializable(Constants.ARGUMENT_CURRENCY_TYPE);
         String[] names = getResources().getStringArray(R.array.coinNames);
-        textName.setText(names[type]);
-        textSymbol.setText(key);
+        textName.setText(names[currencyType.ordinal()]);
+        textSymbol.setText(currencyType.key);
         currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
         currencyViewModel.getCurrencyList()
                 .observe(this, map -> {
-                    if (map.containsKey(key)) {
+                    if (map.containsKey(currencyType.key)) {
                         NumberFormat numberFormat = NumberFormat.getNumberInstance();
-                        textPrice.setText(numberFormat.format(Long.parseLong(map.get(key).getPrice())));
+                        textPrice.setText(numberFormat.format(Long.parseLong(map.get(currencyType.key).getPrice())));
                     }
                 });
+        switch (transactionType) {
+            case TYPE_BUY:
+                textTitle.setText(R.string.buying);
+                textAmount.setText(R.string.amount_of_buying);
+                break;
+            case TYPE_SELL:
+                textTitle.setText(R.string.selling);
+                textAmount.setText(R.string.amount_of_selling);
+                break;
+        }
     }
 }
