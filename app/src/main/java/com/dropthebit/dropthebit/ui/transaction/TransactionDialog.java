@@ -15,10 +15,15 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyType;
+import com.dropthebit.dropthebit.provider.pref.CommonPref;
+import com.dropthebit.dropthebit.provider.room.RoomProvider;
+import com.dropthebit.dropthebit.provider.room.Wallet;
+import com.dropthebit.dropthebit.provider.room.WalletDao;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.lang.annotation.Retention;
@@ -35,6 +40,7 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -186,7 +192,49 @@ public class TransactionDialog extends DialogFragment {
 
     @OnClick(R.id.button_confirm)
     public void onClickConfirm() {
-        dismiss();
+        switch (transactionType) {
+            case TYPE_BUY:
+                handleBuying();
+                break;
+            case TYPE_SELL:
+                handleSelling();
+                break;
+            default:
+                dismiss();
+        }
+    }
+
+    private void handleBuying() {
+        double amount = Double.parseDouble(editAmount.getText().toString());
+        long price = (long) (amount * currentPrice);
+        if (CommonPref.getInstance(getContext()).getKRW() >= price) {
+            CommonPref.getInstance(getContext()).addKRW(-price);
+            Toast.makeText(getContext(), "거래가 성사되었습니다", Toast.LENGTH_SHORT).show();
+            dismiss();
+        } else {
+            Toast.makeText(getContext(), "잔액이 부족합니다", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleSelling() {
+        double amount = Double.parseDouble(editAmount.getText().toString());
+        long price = (long) (amount * currentPrice);
+        WalletDao walletDao = RoomProvider.getInstance(getContext()).getDatabase().walletDao();
+        walletDao.loadWallet(currencyType.key)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(wallet -> {
+                            if (wallet.amount >= amount) {
+                                CommonPref.getInstance(getContext()).addKRW(price);
+                                wallet.amount -= amount;
+                                walletDao.updateWallet(wallet);
+                                Toast.makeText(getContext(), "거래가 성사되었습니다", Toast.LENGTH_SHORT).show();
+                                dismiss();
+                            } else {
+                                Toast.makeText(getContext(), "화폐량이 부족합니다", Toast.LENGTH_SHORT).show();
+                            }
+                        }, Throwable::printStackTrace,
+                        () -> Toast.makeText(getContext(), "화폐량이 부족합니다", Toast.LENGTH_SHORT).show());
     }
 
     private void initView() {
