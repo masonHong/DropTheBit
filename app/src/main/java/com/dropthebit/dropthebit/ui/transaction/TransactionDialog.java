@@ -7,6 +7,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,6 +87,8 @@ public class TransactionDialog extends DialogFragment {
     private long currentPrice = 0;
     private int currentCount = 0;
     private boolean isFirstLoaded = true;
+    private boolean isCommaEditing = false;
+    private int cursorPosition = 0;
 
     public static TransactionDialog newInstance(@TransactionType int transactionType, CurrencyType currencyType) {
         TransactionDialog dialog = new TransactionDialog();
@@ -148,19 +151,31 @@ public class TransactionDialog extends DialogFragment {
                 amount = Double.parseDouble(text.toString());
             }
             long predictPrice = (long) (amount * currentPrice);
-            editPredictPrice.setText(String.format(Locale.getDefault(), "%d", predictPrice));
+            editPredictPrice.setText(NumberFormat.getInstance().format(predictPrice));
         }
     }
 
     @OnTextChanged(R.id.edit_predict_price)
     public void onPredictPriceChanged(CharSequence text, int start, int end, int length) {
         if (editPredictPrice.hasFocus()) {
+            if (isCommaEditing) {
+                isCommaEditing = false;
+                if (cursorPosition >= text.length()) {
+                    cursorPosition = text.length();
+                }
+                editPredictPrice.setSelection(cursorPosition);
+                return;
+            }
+            isCommaEditing = true;
+            cursorPosition = editPredictPrice.getSelectionStart();
+            String str = text.toString().replaceAll(",", "");
             long predictPrice = 0;
             if (!text.toString().isEmpty()) {
-                predictPrice = Long.parseLong(text.toString());
+                predictPrice = Long.parseLong(str);
             }
             double amount = (double) predictPrice / currentPrice;
             editAmount.setText(String.format(Locale.getDefault(), "%f", amount));
+            editPredictPrice.setText(NumberFormat.getInstance().format(predictPrice));
         }
     }
 
