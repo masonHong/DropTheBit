@@ -28,6 +28,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -86,12 +87,15 @@ public class DetailActivity extends AppCompatActivity {
         Disposable disposable =
                 // 가장 최근 데이터 로드
                 priceHistoryDao.loadRecentHistory(type.key)
-                // 없을 경우 시간 0, 있을 경우 해당 시간 + 1 (해당 시간 이후를 검색하기 위해
-                .map(priceHistory ->
-                        priceHistory == null ? 0L : priceHistory.time + 1)
-                // 불러온 시간으로 서버에 데이터 요청
-                .flatMap(time ->
-                        DTBProvider.getInstance().getHistory(type, time))
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(history -> requestHistories(history.time + 1),
+                                Throwable::printStackTrace,
+                                () -> requestHistories(0));
+        compositeDisposable.add(disposable);
+    }
+
+    private void requestHistories(long time) {
+        Disposable disposable = DTBProvider.getInstance().getHistory(type, time)
                 // data만 필요함
                 .map(DTBCoinDTO::getData)
                 // 시작 스케줄러 io
@@ -107,12 +111,12 @@ public class DetailActivity extends AppCompatActivity {
                     throwable.printStackTrace();
                     finish();
                 });
-
         compositeDisposable.add(disposable);
     }
 
     /**
      * 데이터베이스 목록 업데이트
+     *
      * @param list 업데이트할 데이터
      */
     private void updateLocalDatabase(List<DTBHistoryDTO> list) {
@@ -144,8 +148,8 @@ public class DetailActivity extends AppCompatActivity {
                         // 데이터 표시 제거
                         lineData.setValueFormatter((value, entry, dataSetIndex, viewPortHandler) -> "");
                         lineChart.setData(lineData);
-                        // 보이는 데이터 최대 50개
-                        lineChart.setVisibleXRangeMaximum(50);
+                        // 보이는 데이터 최대 100개
+                        lineChart.setVisibleXRangeMaximum(100);
                         // 차트 맨 끝 으로 이동
                         lineChart.moveViewToX(entries.get(entries.size() - 1).getX());
                         // 그리기
