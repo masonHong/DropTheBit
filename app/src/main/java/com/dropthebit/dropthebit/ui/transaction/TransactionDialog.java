@@ -184,7 +184,11 @@ public class TransactionDialog extends DialogFragment {
         currencyViewModel.getCurrencyList()
                 .observe(this, map -> {
                     if (map.containsKey(currencyType)) {
-                        realTimePrice = Integer.parseInt(map.get(currencyType).getPrice());
+                        String price = map.get(currencyType).getPrice();
+                        if (price.contains(".")) {
+                            price = price.substring(0, price.indexOf("."));
+                        }
+                        realTimePrice = Integer.parseInt(price);
                         if (isFirstLoaded) {
                             NumberFormat numberFormat = NumberFormat.getNumberInstance();
                             currentPrice = realTimePrice;
