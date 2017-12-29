@@ -17,7 +17,7 @@ import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.ui.detail.DetailActivity;
-import com.dropthebit.dropthebit.ui.viewholder.CurrencyViewHolder;
+import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

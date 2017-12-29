@@ -1,4 +1,4 @@
-package com.dropthebit.dropthebit.ui.viewholder;
+package com.dropthebit.dropthebit.ui.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
