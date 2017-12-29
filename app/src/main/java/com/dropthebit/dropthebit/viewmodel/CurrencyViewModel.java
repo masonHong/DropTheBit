@@ -59,7 +59,7 @@ public class CurrencyViewModel extends AndroidViewModel {
                     map.put(CurrencyType.BitCoinGold.key, new CurrencyData(CurrencyType.BitCoinGold, coinNames[2], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
                     target = data.getETH();
                     map.put(CurrencyType.Etherium.key, new CurrencyData(CurrencyType.Etherium, coinNames[3], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
-                    target = data.getBTC();
+                    target = data.getETC();
                     map.put(CurrencyType.EtheriumClassic.key, new CurrencyData(CurrencyType.EtheriumClassic, coinNames[4], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
                     target = data.getXRP();
                     map.put(CurrencyType.Ripple.key, new CurrencyData(CurrencyType.Ripple, coinNames[5], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
