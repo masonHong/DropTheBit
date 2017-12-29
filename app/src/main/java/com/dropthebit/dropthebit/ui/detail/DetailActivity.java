@@ -70,7 +70,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        compositeDisposable.dispose();
+        compositeDisposable.clear();
     }
 
     @OnClick(R.id.button_buy)

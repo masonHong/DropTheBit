@@ -53,7 +53,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onBackPressed();
         // 백 버튼 시 액티비티 시작 취소
         if (compositeDisposable != null) {
-            compositeDisposable.dispose();
+            compositeDisposable.clear();
         }
     }
 }

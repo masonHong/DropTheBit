@@ -34,6 +34,7 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 /**
  * Created by mason-hong on 2017. 12. 16..
@@ -45,7 +46,8 @@ public class TransactionDialog extends DialogFragment {
     // 원하는 값만 사용하도록 경고해주는 용도
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_BUY, TYPE_SELL})
-    public @interface TransactionType {}
+    public @interface TransactionType {
+    }
 
     @BindView(R.id.text_title)
     TextView textTitle;
@@ -117,14 +119,17 @@ public class TransactionDialog extends DialogFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(time -> {
                     currentCount += Constants.PERIOD_TRANSACTION_INTERVAL;
-//                    progressTime.setProgress(currentCount);
+                    float rate = currentCount / (float) Constants.PERIOD_TRANSACTION_REFRESH;
+                    progressTime.setProgress((int) (rate * 100));
                     if (currentCount == Constants.PERIOD_TRANSACTION_REFRESH) {
                         currentCount = 0;
                         currentPrice = realTimePrice;
                         NumberFormat numberFormat = NumberFormat.getNumberInstance();
                         textPrice.setText(numberFormat.format(currentPrice));
                     }
-                    textTime.setText(String.format(Locale.getDefault(), "%.01f초", (Constants.PERIOD_TRANSACTION_REFRESH - currentCount) / 1000F));
+                    if (currentCount % 500 == 0) {
+                        textTime.setText(String.format(Locale.getDefault(), "%.01f초", (Constants.PERIOD_TRANSACTION_REFRESH - currentCount) / 1000F));
+                    }
                 });
         compositeDisposable.add(disposable);
     }
@@ -132,7 +137,7 @@ public class TransactionDialog extends DialogFragment {
     @Override
     public void onStop() {
         super.onStop();
-        compositeDisposable.dispose();
+        compositeDisposable.clear();
     }
 
     @OnTextChanged(R.id.edit_amount)
@@ -142,7 +147,7 @@ public class TransactionDialog extends DialogFragment {
             if (!text.toString().isEmpty()) {
                 amount = Double.parseDouble(text.toString());
             }
-            long predictPrice = (long)(amount * currentPrice);
+            long predictPrice = (long) (amount * currentPrice);
             editPredictPrice.setText(String.format(Locale.getDefault(), "%d", predictPrice));
         }
     }

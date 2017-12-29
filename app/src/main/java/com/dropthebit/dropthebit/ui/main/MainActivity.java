@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
     @Override
     protected void onStop() {
         super.onStop();
-        compositeDisposable.dispose();
+        compositeDisposable.clear();
     }
 
     @Override
