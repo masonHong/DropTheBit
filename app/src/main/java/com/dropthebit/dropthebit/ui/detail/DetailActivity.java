@@ -171,6 +171,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private void showChartLoadingIndicator(boolean show) {
         progressLoading.setVisibility(show ? View.VISIBLE : View.GONE);
-        lineChart.setVisibility(show ? View.GONE : View.VISIBLE);
+        lineChart.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
     }
 }
