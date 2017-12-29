@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -27,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -62,6 +65,12 @@ public class TransactionDialog extends DialogFragment {
     @BindView(R.id.text_time)
     TextView textTime;
 
+    @BindView(R.id.edit_amount)
+    EditText editAmount;
+
+    @BindView(R.id.edit_predict_price)
+    EditText editPredictPrice;
+
     @BindView(R.id.progress_time)
     ProgressBar progressTime;
 
@@ -71,8 +80,8 @@ public class TransactionDialog extends DialogFragment {
     private CurrencyType currencyType;
     private CurrencyViewModel currencyViewModel;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private int realTimePrice = 0;
-    private int currentPrice = 0;
+    private long realTimePrice = 0;
+    private long currentPrice = 0;
     private int currentCount = 0;
     private boolean isFirstLoaded = true;
 
@@ -126,6 +135,40 @@ public class TransactionDialog extends DialogFragment {
         compositeDisposable.dispose();
     }
 
+    @OnTextChanged(R.id.edit_amount)
+    public void onAmountChanged(CharSequence text, int start, int end, int length) {
+        if (editAmount.hasFocus()) {
+            double amount = 0;
+            if (!text.toString().isEmpty()) {
+                amount = Double.parseDouble(text.toString());
+            }
+            long predictPrice = (long)(amount * currentPrice);
+            editPredictPrice.setText(String.format(Locale.getDefault(), "%d", predictPrice));
+        }
+    }
+
+    @OnTextChanged(R.id.edit_predict_price)
+    public void onPredictPriceChanged(CharSequence text, int start, int end, int length) {
+        if (editPredictPrice.hasFocus()) {
+            long predictPrice = 0;
+            if (!text.toString().isEmpty()) {
+                predictPrice = Long.parseLong(text.toString());
+            }
+            double amount = (double) predictPrice / currentPrice;
+            editAmount.setText(String.format(Locale.getDefault(), "%f", amount));
+        }
+    }
+
+    @OnClick(R.id.button_cancel)
+    public void onClickCancel() {
+        dismiss();
+    }
+
+    @OnClick(R.id.button_confirm)
+    public void onClickConfirm() {
+        dismiss();
+    }
+
     private void initView() {
         transactionType = getArguments().getInt(Constants.ARGUMENT_TYPE, 0);
         currencyType = (CurrencyType) getArguments().getSerializable(Constants.ARGUMENT_CURRENCY_TYPE);
@@ -139,6 +182,7 @@ public class TransactionDialog extends DialogFragment {
                         realTimePrice = Integer.parseInt(map.get(currencyType.key).getPrice());
                         if (isFirstLoaded) {
                             NumberFormat numberFormat = NumberFormat.getNumberInstance();
+                            currentPrice = realTimePrice;
                             textPrice.setText(numberFormat.format(realTimePrice));
                             isFirstLoaded = false;
                         }
