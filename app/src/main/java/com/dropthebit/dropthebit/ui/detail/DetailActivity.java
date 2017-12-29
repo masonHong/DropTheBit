@@ -2,6 +2,8 @@ package com.dropthebit.dropthebit.ui.detail;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.api.DTBProvider;
@@ -34,6 +36,9 @@ public class DetailActivity extends AppCompatActivity {
 
     @BindView(R.id.chart)
     LineChart lineChart;
+
+    @BindView(R.id.progress_loading)
+    ProgressBar progressLoading;
 
     // 코인 타입
     private CurrencyType type;
@@ -84,6 +89,7 @@ public class DetailActivity extends AppCompatActivity {
      * 서버로부터 데이터를 최신화 하는 함수
      */
     private void updateLocalFromRemote() {
+        showChartLoadingIndicator(true);
         Disposable disposable =
                 // 가장 최근 데이터 로드
                 priceHistoryDao.loadRecentHistory(type.key)
@@ -154,9 +160,17 @@ public class DetailActivity extends AppCompatActivity {
                         lineChart.moveViewToX(entries.get(entries.size() - 1).getX());
                         // 그리기
                         lineChart.invalidate();
+                        showChartLoadingIndicator(false);
                     }
-                }, Throwable::printStackTrace);
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    showChartLoadingIndicator(false);
+                });
         compositeDisposable.add(disposable);
     }
 
+    private void showChartLoadingIndicator(boolean show) {
+        progressLoading.setVisibility(show ? View.VISIBLE : View.GONE);
+        lineChart.setVisibility(show ? View.GONE : View.VISIBLE);
+    }
 }
