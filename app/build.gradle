@@ -15,7 +15,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = "DropTheBit-${variant.versionName}(${variant.versionCode}).apk"
+            }
+        }
     }
+
     buildToolsVersion '26.0.2'
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
