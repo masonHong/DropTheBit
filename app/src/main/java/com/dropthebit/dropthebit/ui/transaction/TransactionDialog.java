@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
@@ -21,9 +22,15 @@ import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.text.NumberFormat;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by mason-hong on 2017. 12. 16..
@@ -52,11 +59,22 @@ public class TransactionDialog extends DialogFragment {
     @BindView(R.id.text_amount)
     TextView textAmount;
 
+    @BindView(R.id.text_time)
+    TextView textTime;
+
+    @BindView(R.id.progress_time)
+    ProgressBar progressTime;
+
     @TransactionType
     private int transactionType;
 
     private CurrencyType currencyType;
     private CurrencyViewModel currencyViewModel;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private int realTimePrice = 0;
+    private int currentPrice = 0;
+    private int currentCount = 0;
+    private boolean isFirstLoaded = true;
 
     public static TransactionDialog newInstance(@TransactionType int transactionType, CurrencyType currencyType) {
         TransactionDialog dialog = new TransactionDialog();
@@ -86,6 +104,26 @@ public class TransactionDialog extends DialogFragment {
             params.width = WindowManager.LayoutParams.MATCH_PARENT;
             getDialog().getWindow().setGravity(Gravity.BOTTOM);
         }
+        Disposable disposable = Flowable.interval(0, Constants.PERIOD_TRANSACTION_INTERVAL, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(time -> {
+                    currentCount += Constants.PERIOD_TRANSACTION_INTERVAL;
+//                    progressTime.setProgress(currentCount);
+                    if (currentCount == Constants.PERIOD_TRANSACTION_REFRESH) {
+                        currentCount = 0;
+                        currentPrice = realTimePrice;
+                        NumberFormat numberFormat = NumberFormat.getNumberInstance();
+                        textPrice.setText(numberFormat.format(currentPrice));
+                    }
+                    textTime.setText(String.format(Locale.getDefault(), "%.01f초", (Constants.PERIOD_TRANSACTION_REFRESH - currentCount) / 1000F));
+                });
+        compositeDisposable.add(disposable);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        compositeDisposable.dispose();
     }
 
     private void initView() {
@@ -98,8 +136,12 @@ public class TransactionDialog extends DialogFragment {
         currencyViewModel.getCurrencyList()
                 .observe(this, map -> {
                     if (map.containsKey(currencyType.key)) {
-                        NumberFormat numberFormat = NumberFormat.getNumberInstance();
-                        textPrice.setText(numberFormat.format(Long.parseLong(map.get(currencyType.key).getPrice())));
+                        realTimePrice = Integer.parseInt(map.get(currencyType.key).getPrice());
+                        if (isFirstLoaded) {
+                            NumberFormat numberFormat = NumberFormat.getNumberInstance();
+                            textPrice.setText(numberFormat.format(realTimePrice));
+                            isFirstLoaded = false;
+                        }
                     }
                 });
         switch (transactionType) {

@@ -10,4 +10,7 @@ public class Constants {
     public final static String ARGUMENT_CURRENCY_TYPE = "currencyType";
 
     public final static String TAG_TRANSACTION = "transaction";
+
+    public final static int PERIOD_TRANSACTION_REFRESH = 10000;
+    public final static int PERIOD_TRANSACTION_INTERVAL = 200;
 }
