@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 public class CommonPref {
     private static final String PREF_NAME = "common";
     private static final String FIELD_FIRST_START = "firstStart";
+    private static final String FIELD_FIRST_PAYMENT = "firstPayment";
     private static final String FIELD_KRW = "krw";
     private static CommonPref instance;
     private SharedPreferences pref;
@@ -36,6 +37,16 @@ public class CommonPref {
 
     public boolean isFirstStart() {
         return pref.getBoolean(FIELD_FIRST_START, true);
+    }
+
+    public void setFirstPayment(boolean firstPayment) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(FIELD_FIRST_PAYMENT, firstPayment);
+        editor.apply();
+    }
+
+    public boolean isFirstPayment() {
+        return pref.getBoolean(FIELD_FIRST_PAYMENT, true);
     }
 
     public void addKRW(long amount) {

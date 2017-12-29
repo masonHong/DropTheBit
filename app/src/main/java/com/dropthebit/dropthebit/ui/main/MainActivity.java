@@ -1,5 +1,6 @@
 package com.dropthebit.dropthebit.ui.main;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,20 +12,33 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.common.Constants;
+import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
+import com.dropthebit.dropthebit.provider.pref.CommonPref;
+import com.dropthebit.dropthebit.provider.room.RoomProvider;
+import com.dropthebit.dropthebit.provider.room.Wallet;
+import com.dropthebit.dropthebit.provider.room.WalletDao;
 import com.dropthebit.dropthebit.ui.detail.DetailActivity;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
+import com.dropthebit.dropthebit.util.CurrencyUtils;
+import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * Created by mason-hong on 2017. 12. 13..
@@ -45,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
 
     private List<TabFragment> tabList = new ArrayList<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private Map<CurrencyType, CurrencyData> currencyDataMap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +77,15 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
         viewPager.setOffscreenPageLimit(2);
         // 탭 레이아웃 설정
         tabLayout.setupWithViewPager(viewPager);
+
+        CommonPref commonPref = CommonPref.getInstance(this);
+        if (commonPref.isFirstPayment()) {
+            commonPref.setFirstPayment(false);
+            Toast.makeText(this, R.string.payment_first_message, Toast.LENGTH_SHORT).show();
+            commonPref.addKRW(Constants.PAYMENT_FIRST);
+        }
+
+        subscribeTotal();
     }
 
     @Override
@@ -97,5 +121,40 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
         public CharSequence getPageTitle(int position) {
             return tabList.get(position).getTabTitle();
         }
+    }
+
+    private void subscribeTotal() {
+        ViewModelProviders.of(this).get(CurrencyViewModel.class)
+                .getCurrencyList()
+                .observe(this, map -> {
+                    currencyDataMap = map;
+                    updateTotal();
+                });
+    }
+
+    private void updateTotal() {
+        WalletDao walletDao = RoomProvider.getInstance(getBaseContext()).getDatabase().walletDao();
+        walletDao.loadAllWallet()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                            long total = 0;
+                            if (currencyDataMap != null) {
+                                for (Wallet wallet : list) {
+                                    String price = currencyDataMap.get(CurrencyUtils.findByName(wallet.name)).getPrice();
+                                    if (price.contains(".")) {
+                                        price = price.substring(0, price.indexOf("."));
+                                    }
+                                    total += wallet.amount * Long.parseLong(price);
+                                }
+                            }
+                            total += CommonPref.getInstance(getBaseContext()).getKRW();
+                            setTotalText(total);
+                        }, Throwable::printStackTrace,
+                        () -> setTotalText(CommonPref.getInstance(getBaseContext()).getKRW()));
+    }
+
+    private void setTotalText(long number) {
+        textTotal.setText(String.format(Locale.getDefault(), "현재 보유 자산\n%d KRW", number));
     }
 }

@@ -21,7 +21,4 @@ public interface WalletDao {
 
     @Query("SELECT * FROM wallet WHERE name=:name")
     Maybe<Wallet> loadWallet(String name);
-
-    @Update
-    void updateWallet(Wallet wallet);
 }

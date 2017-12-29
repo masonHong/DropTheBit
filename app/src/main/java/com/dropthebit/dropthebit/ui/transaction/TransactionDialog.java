@@ -37,9 +37,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -209,10 +211,16 @@ public class TransactionDialog extends DialogFragment {
         long price = (long) (amount * currentPrice);
         if (CommonPref.getInstance(getContext()).getKRW() >= price) {
             CommonPref.getInstance(getContext()).addKRW(-price);
-            Toast.makeText(getContext(), "거래가 성사되었습니다", Toast.LENGTH_SHORT).show();
+            Single.just(amount)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(amount1 -> {
+                        WalletDao walletDao = RoomProvider.getInstance(getContext()).getDatabase().walletDao();
+                        walletDao.insertWallet(new Wallet(currencyType.key, amount1));
+                    }, Throwable::printStackTrace);
+            Toast.makeText(getContext(), R.string.transaction_successful_message, Toast.LENGTH_SHORT).show();
             dismiss();
         } else {
-            Toast.makeText(getContext(), "잔액이 부족합니다", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.transaction_lack_krw_message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -227,14 +235,14 @@ public class TransactionDialog extends DialogFragment {
                             if (wallet.amount >= amount) {
                                 CommonPref.getInstance(getContext()).addKRW(price);
                                 wallet.amount -= amount;
-                                walletDao.updateWallet(wallet);
-                                Toast.makeText(getContext(), "거래가 성사되었습니다", Toast.LENGTH_SHORT).show();
+                                walletDao.insertWallet(wallet);
+                                Toast.makeText(getContext(), R.string.transaction_successful_message, Toast.LENGTH_SHORT).show();
                                 dismiss();
                             } else {
-                                Toast.makeText(getContext(), "화폐량이 부족합니다", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), R.string.trasaction_lack_currency_message, Toast.LENGTH_SHORT).show();
                             }
                         }, Throwable::printStackTrace,
-                        () -> Toast.makeText(getContext(), "화폐량이 부족합니다", Toast.LENGTH_SHORT).show());
+                        () -> Toast.makeText(getContext(), R.string.trasaction_lack_currency_message, Toast.LENGTH_SHORT).show());
     }
 
     private void initView() {

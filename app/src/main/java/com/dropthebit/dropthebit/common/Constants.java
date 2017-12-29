@@ -13,4 +13,6 @@ public class Constants {
 
     public final static int PERIOD_TRANSACTION_REFRESH = 10000;
     public final static int PERIOD_TRANSACTION_INTERVAL = 100;
+
+    public final static int PAYMENT_FIRST = 10000000;
 }
