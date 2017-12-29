@@ -12,6 +12,7 @@ import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
+import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.provider.room.InterestCoinDao;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
@@ -40,7 +41,7 @@ public class InterestTabFragment extends TabFragment {
     private Disposable disposable;
 
     private MainCurrencyListAdapter adapter;
-    private List<String> interestCoins = new ArrayList<>();
+    private List<CurrencyType> interestCoins = new ArrayList<>();
     private CurrencyViewHolder.OnCurrencyClickListener onCurrencyClickListener;
 
     public static InterestTabFragment newInstance(String tabTitle) {
@@ -83,16 +84,23 @@ public class InterestTabFragment extends TabFragment {
                 .flatMap(Flowable::fromArray)
                 .map(coin -> coin.name)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(name -> interestCoins.add(name), Throwable::printStackTrace);
+                .subscribe(name -> {
+                    for (CurrencyType currencyType : CurrencyType.values()) {
+                        if (currencyType.key.equals(name)) {
+                            interestCoins.add(currencyType);
+                            break;
+                        }
+                    }
+                }, Throwable::printStackTrace);
 
         // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
         // 업데이트 될 때 마다 어뎁터에 적용 후 관심코인만 리스트에 넣어서 set
         currencyViewModel.getCurrencyList().observe(this, map -> {
             List<CurrencyData> list = new ArrayList<>();
-            for (String name : interestCoins) {
-                if (map != null && map.containsKey(name)) {
-                    list.add(map.get(name));
+            for (CurrencyType currencyType : interestCoins) {
+                if (map != null && map.containsKey(currencyType)) {
+                    list.add(map.get(currencyType));
                 }
             }
             adapter.setList(list);
