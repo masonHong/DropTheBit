@@ -1,6 +1,7 @@
 package com.dropthebit.dropthebit.ui.main;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -19,6 +20,7 @@ import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.provider.room.InterestCoinDao;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.ui.detail.DetailActivity;
+import com.dropthebit.dropthebit.ui.viewholder.CurrencyViewHolder;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.text.NumberFormat;
@@ -46,6 +48,7 @@ public class InterestTabFragment extends TabFragment {
 
     private InterestListAdapter adapter = new InterestListAdapter();
     private List<String> interestCoins = new ArrayList<>();
+    private CurrencyViewHolder.OnCurrencyClickListener onCurrencyClickListener;
 
     public static InterestTabFragment newInstance(String tabTitle) {
         InterestTabFragment fragment = new InterestTabFragment();
@@ -65,6 +68,13 @@ public class InterestTabFragment extends TabFragment {
         return getArguments().getString(Constants.ARGUMENT_TAB_TITLE);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof CurrencyViewHolder.OnCurrencyClickListener) {
+            onCurrencyClickListener = (CurrencyViewHolder.OnCurrencyClickListener) context;
+        }
+    }
 
     @Override
     public void initView(View view) {
@@ -103,17 +113,19 @@ public class InterestTabFragment extends TabFragment {
         }
     }
 
-    class InterestListAdapter extends RecyclerView.Adapter<InterestListAdapter.InterestViewHolder> {
+    class InterestListAdapter extends RecyclerView.Adapter<CurrencyViewHolder> {
 
         private List<CurrencyData> list = null;
 
         @Override
-        public InterestViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new InterestViewHolder(LayoutInflater.from(getContext()).inflate(R.layout.viewholder_total_item, parent, false));
+        public CurrencyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new CurrencyViewHolder(
+                    LayoutInflater.from(getContext()).inflate(R.layout.viewholder_total_item, parent, false),
+                    onCurrencyClickListener);
         }
 
         @Override
-        public void onBindViewHolder(InterestViewHolder holder, int position) {
+        public void onBindViewHolder(CurrencyViewHolder holder, int position) {
             holder.bind(list.get(position));
         }
 
@@ -125,40 +137,6 @@ public class InterestTabFragment extends TabFragment {
         void setList(List<CurrencyData> list) {
             this.list = list;
             notifyDataSetChanged();
-        }
-
-
-        class InterestViewHolder extends RecyclerView.ViewHolder {
-            @BindView(R.id.text_coin_name)
-            TextView textCoinName;
-
-            @BindView(R.id.text_current_price_number)
-            TextView textCurrentPrice;
-
-            private CurrencyType type;
-
-            public InterestViewHolder(View itemView) {
-                super(itemView);
-
-                ButterKnife.bind(this, itemView);
-                itemView.setOnClickListener(v -> {
-                    Intent intent = new Intent(getContext(), DetailActivity.class);
-                    intent.putExtra(Constants.ARGUMENT_TYPE, type);
-                    startActivity(intent);
-                });
-            }
-
-            void bind(CurrencyData data) {
-                this.type = data.getType();
-                textCoinName.setText(data.getName());
-                String price = data.getPrice();
-                if (price.contains(".")) {
-                    price = price.substring(0, price.indexOf("."));
-                }
-                // 숫자에 콤마 붙이기
-                price = NumberFormat.getInstance().format(Long.parseLong(price));
-                textCurrentPrice.setText(price);
-            }
         }
     }
 }

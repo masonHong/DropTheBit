@@ -1,5 +1,6 @@
 package com.dropthebit.dropthebit.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -13,6 +14,10 @@ import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.base.TabFragment;
+import com.dropthebit.dropthebit.common.Constants;
+import com.dropthebit.dropthebit.model.CurrencyType;
+import com.dropthebit.dropthebit.ui.detail.DetailActivity;
+import com.dropthebit.dropthebit.ui.viewholder.CurrencyViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable;
 /**
  * Created by mason-hong on 2017. 12. 13..
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CurrencyViewHolder.OnCurrencyClickListener {
 
     @BindView(R.id.tool_bar)
     Toolbar toolbar;
@@ -63,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         compositeDisposable.dispose();
+    }
+
+    @Override
+    public void onCurrencyClick(CurrencyType type) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(Constants.ARGUMENT_TYPE, type);
+        startActivity(intent);
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
