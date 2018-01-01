@@ -2,6 +2,7 @@ package com.dropthebit.dropthebit.ui.transaction;
 
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -59,6 +60,10 @@ public class TransactionDialog extends DialogFragment {
     public @interface TransactionType {
     }
 
+    public interface OnTransactionListener {
+        void onTransaction(double amount, long price);
+    }
+
     @BindView(R.id.text_title)
     TextView textTitle;
 
@@ -105,6 +110,7 @@ public class TransactionDialog extends DialogFragment {
     private boolean isCommaEditing = false;
     private int cursorPosition = 0;
     private WalletDao walletDao;
+    private OnTransactionListener onTransactionListener;
 
     public static TransactionDialog newInstance(@TransactionType int transactionType, CurrencyType currencyType) {
         TransactionDialog dialog = new TransactionDialog();
@@ -113,6 +119,14 @@ public class TransactionDialog extends DialogFragment {
         args.putSerializable(Constants.ARGUMENT_CURRENCY_TYPE, currencyType);
         dialog.setArguments(args);
         return dialog;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnTransactionListener) {
+            onTransactionListener = (OnTransactionListener) context;
+        }
     }
 
     @NonNull
@@ -203,7 +217,7 @@ public class TransactionDialog extends DialogFragment {
     @OnClick(R.id.button_confirm)
     public void onClickConfirm() {
         double amount = Double.parseDouble(editAmount.getText().toString());
-        long predictPrice = Long.parseLong(editPredictPrice.getText().toString());
+        long predictPrice = Long.parseLong(editPredictPrice.getText().toString().replaceAll(",", ""));
         if (amount > 0 && predictPrice > 0 ) {
             switch (transactionType) {
                 case TYPE_BUY:
@@ -253,6 +267,9 @@ public class TransactionDialog extends DialogFragment {
                             }, Throwable::printStackTrace,
                             () -> walletDao.insertWallet(new Wallet(currencyType.key, amount)));
             Toast.makeText(getContext(), R.string.transaction_successful_message, Toast.LENGTH_SHORT).show();
+            if (onTransactionListener != null) {
+                onTransactionListener.onTransaction(amount, price);
+            }
             dismiss();
         } else {
             Toast.makeText(getContext(), R.string.transaction_lack_krw_message, Toast.LENGTH_SHORT).show();
@@ -273,6 +290,9 @@ public class TransactionDialog extends DialogFragment {
                                         .subscribeOn(Schedulers.io())
                                         .subscribe(walletDao::insertWallet);
                                 Toast.makeText(getContext(), R.string.transaction_successful_message, Toast.LENGTH_SHORT).show();
+                                if (onTransactionListener != null) {
+                                    onTransactionListener.onTransaction(amount, price);
+                                }
                                 dismiss();
                             } else {
                                 Toast.makeText(getContext(), R.string.trasaction_lack_currency_message, Toast.LENGTH_SHORT).show();

@@ -1,8 +1,6 @@
 package com.dropthebit.dropthebit.ui.detail;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +12,6 @@ import com.dropthebit.dropthebit.api.DTBProvider;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.dto.DTBCoinDTO;
 import com.dropthebit.dropthebit.dto.DTBHistoryDTO;
-import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.provider.room.PriceHistory;
 import com.dropthebit.dropthebit.provider.room.PriceHistoryDao;
@@ -29,21 +26,18 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements TransactionDialog.OnTransactionListener {
 
     @BindView(R.id.text_coin_name)
     TextView textCoinName;
@@ -105,20 +99,22 @@ public class DetailActivity extends AppCompatActivity {
         compositeDisposable.clear();
     }
 
+    @Override
+    public void onTransaction(double amount, long price) {
+        updateAmount();
+    }
+
     private void initView() {
         String[] coinNames = getResources().getStringArray(R.array.coinNames);
         textCoinName.setText(coinNames[type.ordinal()]);
 
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
-        currencyViewModel.getCurrencyList().observe(this, new Observer<LinkedHashMap<CurrencyType, CurrencyData>>() {
-            @Override
-            public void onChanged(@Nullable LinkedHashMap<CurrencyType, CurrencyData> map) {
-                if (map != null && map.containsKey(type)) {
-                    long price = CurrencyUtils.getSafetyPrice(map.get(type));
-                    textCurrentPriceNumber.setText(String.format(Locale.getDefault(), "%d", price));
-                    textHold.setText(getString(R.string.hold_amount_text, amount, type.key));
-                    textPredict.setText(getString(R.string.hold_krw_text_with_bracket, (long) (amount * price)));
-                }
+        currencyViewModel.getCurrencyList().observe(this, map -> {
+            if (map != null && map.containsKey(type)) {
+                long price = CurrencyUtils.getSafetyPrice(map.get(type));
+                textCurrentPriceNumber.setText(NumberFormat.getInstance().format(price));
+                textHold.setText(getString(R.string.hold_amount_text, amount, type.key));
+                textPredict.setText(getString(R.string.hold_krw_text_with_bracket, (long) (amount * price)));
             }
         });
 
