@@ -104,6 +104,7 @@ public class TransactionDialog extends DialogFragment {
     private boolean isFirstLoaded = true;
     private boolean isCommaEditing = false;
     private int cursorPosition = 0;
+    private WalletDao walletDao;
 
     public static TransactionDialog newInstance(@TransactionType int transactionType, CurrencyType currencyType) {
         TransactionDialog dialog = new TransactionDialog();
@@ -201,29 +202,56 @@ public class TransactionDialog extends DialogFragment {
 
     @OnClick(R.id.button_confirm)
     public void onClickConfirm() {
-        switch (transactionType) {
-            case TYPE_BUY:
-                handleBuying();
-                break;
-            case TYPE_SELL:
-                handleSelling();
-                break;
-            default:
-                dismiss();
+        double amount = Double.parseDouble(editAmount.getText().toString());
+        long predictPrice = Long.parseLong(editPredictPrice.getText().toString());
+        if (amount > 0 && predictPrice > 0 ) {
+            switch (transactionType) {
+                case TYPE_BUY:
+                    handleBuying();
+                    break;
+                case TYPE_SELL:
+                    handleSelling();
+                    break;
+                default:
+                    dismiss();
+            }
+        } else {
+            Toast.makeText(getContext(), R.string.transaction_wrong_message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @OnClick({R.id.text_max_amount, R.id.text_max_predict})
+    void onClickMaxAmount() {
+        if (transactionType == TYPE_BUY) {
+            long krw = CommonPref.getInstance(getContext()).getKRW();
+            double maxAmount = krw / (double) currentPrice;
+            editAmount.setText(String.format(Locale.getDefault(), "%.06f", maxAmount));
+            editPredictPrice.setText(String.format(Locale.getDefault(), "%d", krw));
+        } else {
+            walletDao.loadWallet(currencyType.key)
+                    .subscribeOn(Schedulers.io())
+                    .map(wallet -> wallet.amount)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(amount -> {
+                        long krw = (long) (amount * currentPrice);
+                        editAmount.setText(String.format(Locale.getDefault(), "%.06f", amount));
+                        editPredictPrice.setText(String.format(Locale.getDefault(), "%d", krw));
+                    });
         }
     }
 
     private void handleBuying() {
-        double amount = Double.parseDouble(editAmount.getText().toString());
+        final double amount = Double.parseDouble(editAmount.getText().toString());
         long price = (long) (amount * currentPrice);
         if (CommonPref.getInstance(getContext()).getKRW() >= price) {
             CommonPref.getInstance(getContext()).addKRW(-price);
-            Single.just(amount)
+            walletDao.loadWallet(currencyType.key)
                     .subscribeOn(Schedulers.io())
-                    .subscribe(amount1 -> {
-                        WalletDao walletDao = RoomProvider.getInstance(getContext()).getDatabase().walletDao();
-                        walletDao.insertWallet(new Wallet(currencyType.key, amount1));
-                    }, Throwable::printStackTrace);
+                    .subscribe(wallet -> {
+                                wallet.amount += amount;
+                                walletDao.insertWallet(wallet);
+                            }, Throwable::printStackTrace,
+                            () -> walletDao.insertWallet(new Wallet(currencyType.key, amount)));
             Toast.makeText(getContext(), R.string.transaction_successful_message, Toast.LENGTH_SHORT).show();
             dismiss();
         } else {
@@ -234,7 +262,6 @@ public class TransactionDialog extends DialogFragment {
     private void handleSelling() {
         double amount = Double.parseDouble(editAmount.getText().toString());
         long price = (long) (amount * currentPrice);
-        WalletDao walletDao = RoomProvider.getInstance(getContext()).getDatabase().walletDao();
         walletDao.loadWallet(currencyType.key)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -283,7 +310,7 @@ public class TransactionDialog extends DialogFragment {
                 textAmount.setText(R.string.amount_of_selling);
                 break;
         }
-        WalletDao walletDao = RoomProvider.getInstance(getContext()).getDatabase().walletDao();
+        walletDao = RoomProvider.getInstance(getContext()).getDatabase().walletDao();
         walletDao.loadWallet(currencyType.key)
                 .subscribeOn(Schedulers.io())
                 .map(wallet -> wallet.amount)
@@ -291,7 +318,7 @@ public class TransactionDialog extends DialogFragment {
                 .subscribe(
                         amount -> textHold.setText(getString(R.string.hold_amount_text, amount, currencyType.key)),
                         Throwable::printStackTrace,
-                        () -> textHold.setText(getString(R.string.hold_amount_text, 0, currencyType.key)));
+                        () -> textHold.setText(getString(R.string.hold_amount_text, 0F, currencyType.key)));
         textKRW.setText(getString(R.string.hold_krw_text, CommonPref.getInstance(getContext()).getKRW()));
     }
 }

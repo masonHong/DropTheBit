@@ -13,4 +13,5 @@
     <string name="hold_amount_text">보유량: %.06f %s</string>
     <string name="hold_krw_text_with_bracket">( %d KRW )</string>
     <string name="hold_krw_text">보유 금액: %d</string>
+    <string name="transaction_wrong_message">값이 잘못되었습니다</string>
 </resources>

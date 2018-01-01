@@ -72,6 +72,20 @@
         app:layout_constraintTop_toBottomOf="@id/image_currency"
         tools:text="매수량" />
 
+    <TextView
+        android:id="@+id/text_max_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:text="최대로 입력"
+        android:textColor="#00F"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/text_amount"
+        app:layout_constraintLeft_toRightOf="@id/text_amount"
+        app:layout_constraintTop_toTopOf="@id/text_amount" />
+
     <EditText
         android:id="@+id/edit_amount"
         android:layout_width="0dp"
@@ -118,6 +132,20 @@
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_hold" />
+
+    <TextView
+        android:id="@+id/text_max_predict"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:text="최대로 입력"
+        android:textColor="#00F"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/text_predict"
+        app:layout_constraintLeft_toRightOf="@id/text_predict"
+        app:layout_constraintTop_toTopOf="@id/text_predict" />
 
     <EditText
         android:id="@+id/edit_predict_price"
