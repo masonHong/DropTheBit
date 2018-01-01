@@ -10,4 +10,7 @@
     <string name="transaction_successful_message">거래가 성사되었습니다</string>
     <string name="transaction_lack_krw_message">잔액이 부족합니다</string>
     <string name="trasaction_lack_currency_message">화폐량이 부족합니다</string>
+    <string name="hold_amount_text">보유량: %.06f %s</string>
+    <string name="hold_krw_text_with_bracket">( %d KRW )</string>
+    <string name="hold_krw_text">보유 금액: %d</string>
 </resources>

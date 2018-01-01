@@ -1,6 +1,6 @@
 package com.dropthebit.dropthebit.ui.adapter.viewholder;
 
-import android.arch.persistence.room.RoomDatabase;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -13,7 +13,6 @@ import com.dropthebit.dropthebit.provider.room.WalletDao;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
 
 import java.text.NumberFormat;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +35,7 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.text_predict)
     TextView textPredict;
 
+    private Context context;
     private OnCurrencyClickListener onCurrencyClickListener;
     private WalletDao walletDao;
 
@@ -47,6 +47,7 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
 
     public CurrencyViewHolder(View itemView, OnCurrencyClickListener onCurrencyClickListener) {
         super(itemView);
+        context = itemView.getContext();
         this.onCurrencyClickListener = onCurrencyClickListener;
 
         ButterKnife.bind(this, itemView);
@@ -74,12 +75,12 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
                 .map(wallet -> wallet.amount)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(amount -> {
-                            textHold.setText(String.format(Locale.getDefault(), "보유량: %.06f %s", amount, type.key));
-                            textPredict.setText(String.format(Locale.getDefault(), "( %d KRW )", CurrencyUtils.getSafetyPrice(data)));
+                            textHold.setText(context.getString(R.string.hold_amount_text, amount, type.key));
+                            textPredict.setText(context.getString(R.string.hold_krw_text_with_bracket, (long) (amount * CurrencyUtils.getSafetyPrice(data))));
                         }
                         , Throwable::printStackTrace, () -> {
-                            textHold.setText(String.format(Locale.getDefault(), "보유량: %.06f %s", 0F, type.key));
-                            textPredict.setText(String.format(Locale.getDefault(), "( %d KRW )", 0));
+                            textHold.setText(context.getString(R.string.hold_amount_text, 0F, type.key));
+                            textPredict.setText(context.getString(R.string.hold_krw_text_with_bracket, 0));
                         });
     }
 }

@@ -24,6 +24,7 @@ import com.dropthebit.dropthebit.provider.pref.CommonPref;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.provider.room.Wallet;
 import com.dropthebit.dropthebit.provider.room.WalletDao;
+import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.lang.annotation.Retention;
@@ -84,6 +85,12 @@ public class TransactionDialog extends DialogFragment {
 
     @BindView(R.id.progress_time)
     ProgressBar progressTime;
+
+    @BindView(R.id.text_hold)
+    TextView textHold;
+
+    @BindView(R.id.text_krw)
+    TextView textKRW;
 
     @TransactionType
     private int transactionType;
@@ -255,11 +262,7 @@ public class TransactionDialog extends DialogFragment {
         currencyViewModel.getCurrencyList()
                 .observe(this, map -> {
                     if (map.containsKey(currencyType)) {
-                        String price = map.get(currencyType).getPrice();
-                        if (price.contains(".")) {
-                            price = price.substring(0, price.indexOf("."));
-                        }
-                        realTimePrice = Integer.parseInt(price);
+                        realTimePrice = CurrencyUtils.getSafetyPrice(map.get(currencyType));
                         if (isFirstLoaded) {
                             NumberFormat numberFormat = NumberFormat.getNumberInstance();
                             currentPrice = realTimePrice;
@@ -278,5 +281,15 @@ public class TransactionDialog extends DialogFragment {
                 textAmount.setText(R.string.amount_of_selling);
                 break;
         }
+        WalletDao walletDao = RoomProvider.getInstance(getContext()).getDatabase().walletDao();
+        walletDao.loadWallet(currencyType.key)
+                .subscribeOn(Schedulers.io())
+                .map(wallet -> wallet.amount)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        amount -> textHold.setText(getString(R.string.hold_amount_text, amount, currencyType.key)),
+                        Throwable::printStackTrace,
+                        () -> textHold.setText(getString(R.string.hold_amount_text, 0, currencyType.key)));
+        textKRW.setText(getString(R.string.hold_krw_text, CommonPref.getInstance(getContext()).getKRW()));
     }
 }
