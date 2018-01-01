@@ -242,7 +242,9 @@ public class TransactionDialog extends DialogFragment {
                             if (wallet.amount >= amount) {
                                 CommonPref.getInstance(getContext()).addKRW(price);
                                 wallet.amount -= amount;
-                                walletDao.insertWallet(wallet);
+                                Single.just(wallet)
+                                        .subscribeOn(Schedulers.io())
+                                        .subscribe(walletDao::insertWallet);
                                 Toast.makeText(getContext(), R.string.transaction_successful_message, Toast.LENGTH_SHORT).show();
                                 dismiss();
                             } else {
