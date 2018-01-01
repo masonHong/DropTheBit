@@ -1,28 +1,38 @@
 package com.dropthebit.dropthebit.ui.detail;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.api.DTBProvider;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.dto.DTBCoinDTO;
 import com.dropthebit.dropthebit.dto.DTBHistoryDTO;
+import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.provider.room.PriceHistory;
 import com.dropthebit.dropthebit.provider.room.PriceHistoryDao;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
+import com.dropthebit.dropthebit.provider.room.WalletDao;
 import com.dropthebit.dropthebit.ui.transaction.TransactionDialog;
+import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.util.RxUtils;
+import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +44,18 @@ import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class DetailActivity extends AppCompatActivity {
+
+    @BindView(R.id.text_coin_name)
+    TextView textCoinName;
+
+    @BindView(R.id.text_current_price_number)
+    TextView textCurrentPriceNumber;
+
+    @BindView(R.id.text_hold)
+    TextView textHold;
+
+    @BindView(R.id.text_predict)
+    TextView textPredict;
 
     @BindView(R.id.chart)
     LineChart lineChart;
@@ -47,6 +69,10 @@ public class DetailActivity extends AppCompatActivity {
     private PriceHistory[] historyList;
     // 로컬 데이터 접근 권한
     private PriceHistoryDao priceHistoryDao;
+    // 지갑 데이터베이스 접근
+    private WalletDao walletDao;
+    // 화폐 보유량
+    private double amount;
     // Observable 취소 용도
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -54,8 +80,6 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        // 뷰 바인딩
-        ButterKnife.bind(this);
 
         // 자세히 보여줄 타입
         type = (CurrencyType) getIntent().getSerializableExtra(Constants.ARGUMENT_TYPE);
@@ -64,8 +88,41 @@ public class DetailActivity extends AppCompatActivity {
         priceHistoryDao = RoomProvider.getInstance(this)
                 .getDatabase()
                 .priceHistoryDao();
+
+        walletDao = RoomProvider.getInstance(this).getDatabase().walletDao();
+
+        // 뷰 바인딩
+        ButterKnife.bind(this);
+        initView();
+
         // 서버로부터 데이터 최신화
         updateLocalFromRemote();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        compositeDisposable.clear();
+    }
+
+    private void initView() {
+        String[] coinNames = getResources().getStringArray(R.array.coinNames);
+        textCoinName.setText(coinNames[type.ordinal()]);
+
+        CurrencyViewModel currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
+        currencyViewModel.getCurrencyList().observe(this, new Observer<LinkedHashMap<CurrencyType, CurrencyData>>() {
+            @Override
+            public void onChanged(@Nullable LinkedHashMap<CurrencyType, CurrencyData> map) {
+                if (map != null && map.containsKey(type)) {
+                    long price = CurrencyUtils.getSafetyPrice(map.get(type));
+                    textCurrentPriceNumber.setText(String.format(Locale.getDefault(), "%d", price));
+                    textHold.setText(getString(R.string.hold_amount_text, amount, type.key));
+                    textPredict.setText(getString(R.string.hold_krw_text_with_bracket, (long) (amount * price)));
+                }
+            }
+        });
+
+        updateAmount();
 
         RxUtils.clickOne(findViewById(R.id.button_buy), 1000, v -> {
             TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_BUY, type);
@@ -78,10 +135,11 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        compositeDisposable.clear();
+    private void updateAmount() {
+        walletDao.loadWallet(type.key)
+                .subscribeOn(Schedulers.io())
+                .map(wallet -> wallet.amount)
+                .subscribe(a -> amount = a);
     }
 
     /**
