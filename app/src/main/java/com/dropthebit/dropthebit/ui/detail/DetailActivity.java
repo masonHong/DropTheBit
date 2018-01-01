@@ -15,6 +15,7 @@ import com.dropthebit.dropthebit.provider.room.PriceHistory;
 import com.dropthebit.dropthebit.provider.room.PriceHistoryDao;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.ui.transaction.TransactionDialog;
+import com.dropthebit.dropthebit.util.RxUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -65,24 +66,22 @@ public class DetailActivity extends AppCompatActivity {
                 .priceHistoryDao();
         // 서버로부터 데이터 최신화
         updateLocalFromRemote();
+
+        RxUtils.clickOne(findViewById(R.id.button_buy), 1000, v -> {
+            TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_BUY, type);
+            dialog.show(getSupportFragmentManager(), Constants.TAG_TRANSACTION);
+        });
+
+        RxUtils.clickOne(findViewById(R.id.button_sell), 1000, v -> {
+            TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_SELL, type);
+            dialog.show(getSupportFragmentManager(), Constants.TAG_TRANSACTION);
+        });
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         compositeDisposable.clear();
-    }
-
-    @OnClick(R.id.button_buy)
-    void onClickBuy() {
-        TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_BUY, type);
-        dialog.show(getSupportFragmentManager(), Constants.TAG_TRANSACTION);
-    }
-
-    @OnClick(R.id.button_sell)
-    void onClickSell() {
-        TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_SELL, type);
-        dialog.show(getSupportFragmentManager(), Constants.TAG_TRANSACTION);
     }
 
     /**

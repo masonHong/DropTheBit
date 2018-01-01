@@ -11,6 +11,7 @@ import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.provider.room.WalletDao;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
+import com.dropthebit.dropthebit.util.RxUtils;
 
 import java.text.NumberFormat;
 
@@ -51,7 +52,7 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
         this.onCurrencyClickListener = onCurrencyClickListener;
 
         ButterKnife.bind(this, itemView);
-        itemView.setOnClickListener(v -> {
+        RxUtils.clickOne(itemView, 1000, v -> {
             if (this.onCurrencyClickListener != null) {
                 this.onCurrencyClickListener.onCurrencyClick(type);
             }
