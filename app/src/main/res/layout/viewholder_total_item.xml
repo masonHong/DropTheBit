@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
     android:background="?attr/selectableItemBackground"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/text_coin_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="22sp"
         android:textColor="#000"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        tools:text="비트코인" />
 
     <TextView
         android:id="@+id/text_current_price"
@@ -25,17 +26,32 @@
         android:text="현재 가격"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_coin_name"
-        />
+        app:layout_constraintTop_toBottomOf="@id/text_coin_name" />
 
     <TextView
         android:id="@+id/text_current_price_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:textSize="16sp"
         android:textColor="#000"
-        app:layout_constraintLeft_toRightOf="@id/text_current_price"
+        android:textSize="16sp"
         app:layout_constraintBaseline_toBaselineOf="@id/text_current_price"
-        />
+        app:layout_constraintLeft_toRightOf="@id/text_current_price" />
+
+    <TextView
+        android:id="@+id/text_hold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/text_predict"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_predict"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_hold" />
 </android.support.constraint.ConstraintLayout>

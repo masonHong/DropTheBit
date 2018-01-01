@@ -1,5 +1,6 @@
 package com.dropthebit.dropthebit.util;
 
+import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
 
 /**
@@ -13,5 +14,13 @@ public class CurrencyUtils {
             }
         }
         return null;
+    }
+
+    public static long getSafetyPrice(CurrencyData data) {
+        String price = data.getPrice();
+        if (price.contains(".")) {
+            price = price.substring(0, price.indexOf("."));
+        }
+        return Long.parseLong(price);
     }
 }
