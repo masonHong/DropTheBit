@@ -13,11 +13,14 @@ import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
+import com.dropthebit.dropthebit.provider.room.InterestCoin;
 import com.dropthebit.dropthebit.provider.room.InterestCoinDao;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
 import com.dropthebit.dropthebit.ui.adapter.MainCurrencyListAdapter;
+import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
+import com.dropthebit.dropthebit.viewmodel.InterestViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +36,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class InterestTabFragment extends TabFragment {
 
-    private InterestCoinDao interestCoinDao;
-
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-
-    private Disposable disposable;
 
     private MainCurrencyListAdapter adapter;
     private List<CurrencyType> interestCoins = new ArrayList<>();
@@ -77,22 +76,6 @@ public class InterestTabFragment extends TabFragment {
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-        interestCoinDao = RoomProvider.getInstance(getContext()).getDatabase().intersetCoinDao();
-
-        disposable = interestCoinDao.loadAllInterestCoins()
-                .subscribeOn(Schedulers.io())
-                .flatMap(Flowable::fromArray)
-                .map(coin -> coin.name)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(name -> {
-                    for (CurrencyType currencyType : CurrencyType.values()) {
-                        if (currencyType.key.equals(name)) {
-                            interestCoins.add(currencyType);
-                            break;
-                        }
-                    }
-                }, Throwable::printStackTrace);
-
         // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
         // 업데이트 될 때 마다 어뎁터에 적용 후 관심코인만 리스트에 넣어서 set
@@ -105,13 +88,18 @@ public class InterestTabFragment extends TabFragment {
             }
             adapter.setList(list);
         });
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (disposable != null) {
-            disposable.dispose();
-        }
+        InterestViewModel interestViewModel = ViewModelProviders.of(getActivity()).get(InterestViewModel.class);
+        interestViewModel.getInterestCoins().observe(this, list -> {
+            interestCoins.clear();
+            if (list != null) {
+                for (InterestCoin interestCoin : list) {
+                    CurrencyType type = CurrencyUtils.findByName(interestCoin.name);
+                    if (type != null) {
+                        interestCoins.add(type);
+                    }
+                }
+            }
+        });
     }
 }

@@ -12,6 +12,6 @@ import android.arch.persistence.room.RoomDatabase;
 )
 public abstract class LocalDatabase extends RoomDatabase {
     public abstract PriceHistoryDao priceHistoryDao();
-    public abstract InterestCoinDao intersetCoinDao();
+    public abstract InterestCoinDao interestCoinDao();
     public abstract WalletDao walletDao();
 }

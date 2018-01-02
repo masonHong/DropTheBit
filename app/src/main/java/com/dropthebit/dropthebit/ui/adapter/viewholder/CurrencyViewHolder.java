@@ -42,6 +42,7 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
 
     public interface OnCurrencyClickListener {
         void onCurrencyClick(CurrencyType type);
+        void onCurrencyLongClick(CurrencyType type);
     }
 
     private CurrencyType type;
@@ -56,6 +57,12 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
             if (this.onCurrencyClickListener != null) {
                 this.onCurrencyClickListener.onCurrencyClick(type);
             }
+        });
+        itemView.setOnLongClickListener(v -> {
+            if (this.onCurrencyClickListener != null) {
+                this.onCurrencyClickListener.onCurrencyLongClick(type);
+            }
+            return false;
         });
         walletDao = RoomProvider.getInstance(itemView.getContext()).getDatabase().walletDao();
     }

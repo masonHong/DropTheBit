@@ -28,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         if (CommonPref.getInstance(this).isFirstStart()) {
-            Disposable disposable = Observable.just(RoomProvider.getInstance(this).getDatabase().intersetCoinDao())
+            Disposable disposable = Observable.just(RoomProvider.getInstance(this).getDatabase().interestCoinDao())
                     .subscribeOn(Schedulers.io())
                     .subscribe(dao -> {
                         dao.insertInterestCoin(new InterestCoin(CurrencyType.BitCoin.key));

@@ -1,6 +1,7 @@
 package com.dropthebit.dropthebit.ui.main;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import com.dropthebit.dropthebit.ui.detail.DetailActivity;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
+import com.dropthebit.dropthebit.viewmodel.InterestViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
     private List<TabFragment> tabList = new ArrayList<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Map<CurrencyType, CurrencyData> currencyDataMap;
+    private InterestViewModel interestViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
         }
 
         subscribeTotal();
+
+        interestViewModel = ViewModelProviders.of(this).get(InterestViewModel.class);
     }
 
     @Override
@@ -99,6 +105,22 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(Constants.ARGUMENT_TYPE, type);
         startActivity(intent);
+    }
+
+    @Override
+    public void onCurrencyLongClick(CurrencyType type) {
+        new AlertDialog.Builder(this)
+                .setItems(new CharSequence[]{"add", "remove"}, (dialog, which) -> {
+                    Timber.i("dialog which: %d", which);
+                    if (which == 0) {
+                        interestViewModel.addInterestCoin(type.key);
+                    } else {
+                        interestViewModel.removeInterestCoin(type.key);
+                    }
+                    dialog.dismiss();
+                })
+                .create()
+                .show();
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
