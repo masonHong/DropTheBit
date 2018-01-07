@@ -6,12 +6,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
+import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.provider.room.WalletDao;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.util.RxUtils;
+import com.dropthebit.dropthebit.util.StringUtils;
 
 import java.text.NumberFormat;
 
@@ -70,13 +72,7 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
     public void bind(CurrencyData data) {
         this.type = data.getType();
         textCoinName.setText(data.getName());
-        String price = data.getPrice();
-        if (price.contains(".")) {
-            price = price.substring(0, price.indexOf("."));
-        }
-        // 숫자에 콤마 붙이기
-        price = NumberFormat.getInstance().format(Long.parseLong(price));
-        textCurrentPrice.setText(price);
+        textCurrentPrice.setText(StringUtils.getPriceString(CurrencyUtils.getSafetyPrice(data), ""));
 
         walletDao.loadWallet(type.key)
                 .subscribeOn(Schedulers.io())
@@ -84,13 +80,11 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(amount -> {
                             textHold.setText(context.getString(R.string.hold_amount_text, amount, type.key));
-                            textPredict.setText(context.getString(
-                                    R.string.hold_krw_text_with_bracket,
-                                    NumberFormat.getIntegerInstance().format(amount * CurrencyUtils.getSafetyPrice(data))));
+                            textPredict.setText(StringUtils.getPriceString(amount * CurrencyUtils.getSafetyPrice(data), Constants.UNIT_WON));
                         }
                         , Throwable::printStackTrace, () -> {
                             textHold.setText(context.getString(R.string.hold_amount_text, 0F, type.key));
-                            textPredict.setText(context.getString(R.string.hold_krw_text_with_bracket, 0));
+                            textPredict.setText(StringUtils.getPriceString(0, Constants.UNIT_WON));
                         });
     }
 }

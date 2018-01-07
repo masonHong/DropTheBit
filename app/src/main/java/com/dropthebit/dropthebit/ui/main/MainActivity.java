@@ -34,6 +34,7 @@ import com.dropthebit.dropthebit.provider.room.WalletDao;
 import com.dropthebit.dropthebit.ui.detail.DetailActivity;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
+import com.dropthebit.dropthebit.util.StringUtils;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 import com.dropthebit.dropthebit.viewmodel.InterestViewModel;
 
@@ -184,11 +185,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
     }
 
     private void setTotalText(long number) {
-        String total = NumberFormat.getIntegerInstance().format(number);
-        SpannableString ss = new SpannableString(String.format(Locale.getDefault(), "%s  KRW", total));
-        ss.setSpan(new AbsoluteSizeSpan(28, true), 0, total.length() + 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new StyleSpan(Typeface.BOLD), 0, total.length() + 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new AbsoluteSizeSpan(15, true), total.length() + 1, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString ss = new SpannableString(StringUtils.getPriceString(number, Constants.UNIT_WON));
+        int positionKRW = ss.length() - Constants.UNIT_WON.length();
+        ss.setSpan(new AbsoluteSizeSpan(28, true), 0, positionKRW, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new StyleSpan(Typeface.BOLD), 0, positionKRW, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new AbsoluteSizeSpan(15, true), positionKRW, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textTotal.setText(ss);
     }
 }
