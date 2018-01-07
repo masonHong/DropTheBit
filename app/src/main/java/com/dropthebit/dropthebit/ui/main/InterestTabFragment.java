@@ -16,6 +16,7 @@ import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.provider.room.InterestCoin;
 import com.dropthebit.dropthebit.provider.room.InterestCoinDao;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
+import com.dropthebit.dropthebit.ui.adapter.MarginItemDecoration;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
 import com.dropthebit.dropthebit.ui.adapter.MainCurrencyListAdapter;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
@@ -25,6 +26,7 @@ import com.dropthebit.dropthebit.viewmodel.InterestViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindDimen;
 import butterknife.BindView;
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -38,6 +40,9 @@ public class InterestTabFragment extends TabFragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+
+    @BindDimen(R.dimen.margin_coin_viewholder)
+    int margin;
 
     private MainCurrencyListAdapter adapter;
     private List<CurrencyType> interestCoins = new ArrayList<>();
@@ -74,7 +79,7 @@ public class InterestTabFragment extends TabFragment {
         adapter = new MainCurrencyListAdapter(getContext(), onCurrencyClickListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(new MarginItemDecoration(margin));
 
         // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);

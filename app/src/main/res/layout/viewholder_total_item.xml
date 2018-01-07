@@ -3,55 +3,78 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
+    android:layout_height="80dp"
+    android:background="@drawable/shape_coin_viewholder"
     android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/image_coin"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="#123"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_coin_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#000"
-        android:textSize="22sp"
+        android:layout_marginStart="12dp"
+        android:textColor="@color/app_black"
+        android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/text_hold"
+        app:layout_constraintLeft_toRightOf="@id/image_coin"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="비트코인" />
-
-    <TextView
-        android:id="@+id/text_current_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="현재 가격"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_coin_name" />
-
-    <TextView
-        android:id="@+id/text_current_price_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textColor="#000"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@id/text_current_price"
-        app:layout_constraintLeft_toRightOf="@id/text_current_price" />
 
     <TextView
         android:id="@+id/text_hold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/text_predict"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="3dp"
+        android:textColor="@color/app_light_gray"
+        android:textSize="9sp"
+        app:layout_constraintBottom_toTopOf="@id/text_predict"
+        app:layout_constraintLeft_toRightOf="@id/image_coin"
+        app:layout_constraintTop_toBottomOf="@id/text_coin_name"
+        tools:text="0.001 BTC" />
 
     <TextView
         android:id="@+id/text_predict"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/app_gray"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/image_coin"
+        app:layout_constraintTop_toBottomOf="@id/text_hold"
+        tools:text="50,000 KRW" />
+
+    <TextView
+        android:id="@+id/text_current_price_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_hold" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="19,504,200 KRW" />
+
+    <TextView
+        android:id="@+id/text_current_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:text="현재 가격"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/text_current_price_number"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

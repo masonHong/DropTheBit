@@ -11,12 +11,14 @@ import android.view.View;
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.common.Constants;
+import com.dropthebit.dropthebit.ui.adapter.MarginItemDecoration;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
 import com.dropthebit.dropthebit.ui.adapter.MainCurrencyListAdapter;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.util.ArrayList;
 
+import butterknife.BindDimen;
 import butterknife.BindView;
 
 /**
@@ -26,6 +28,9 @@ public class TotalTabFragment extends TabFragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+
+    @BindDimen(R.dimen.margin_coin_viewholder)
+    int margin;
 
     private MainCurrencyListAdapter adapter;
     private CurrencyViewHolder.OnCurrencyClickListener onCurrencyClickListener;
@@ -63,7 +68,7 @@ public class TotalTabFragment extends TabFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(new MarginItemDecoration(margin));
         // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
         // 업데이트 될 때 마다 어뎁터에 적용

@@ -10,42 +10,33 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/app_bar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <android.support.design.widget.CollapsingToolbarLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/tool_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize">
-
-                </android.support.v7.widget.Toolbar>
-            </android.support.design.widget.CollapsingToolbarLayout>
-        </android.support.design.widget.AppBarLayout>
-
         <TextView
             android:id="@+id/text_total"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
+            android:background="@color/app_black"
             android:gravity="center"
             android:padding="10dp"
+            android:textColor="@color/app_yellow"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/app_bar"
-            tools:text="현재 보유 자산\n10,000KRW" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2,105,000 KRW\n+ 10,342 KRW (+ 1.2%) " />
+
+        <TextView
+            android:id="@+id/text_activity_title"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            tools:text="내 자산"/>
 
         <View
+            android:id="@+id/guide_view_pager"
             android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="#000"
+            android:layout_height="0dp"
+            android:layout_marginBottom="40dp"
             app:layout_constraintBottom_toBottomOf="@id/text_total"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
@@ -58,7 +49,7 @@
             app:layout_constraintBottom_toTopOf="@+id/tab_layout"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_total" />
+            app:layout_constraintTop_toBottomOf="@id/guide_view_pager" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"

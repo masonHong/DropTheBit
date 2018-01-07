@@ -3,6 +3,7 @@ package com.dropthebit.dropthebit.ui.main;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -13,6 +14,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +37,7 @@ import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 import com.dropthebit.dropthebit.viewmodel.InterestViewModel;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -48,8 +55,8 @@ import timber.log.Timber;
  */
 public class MainActivity extends AppCompatActivity implements CurrencyViewHolder.OnCurrencyClickListener {
 
-    @BindView(R.id.tool_bar)
-    Toolbar toolbar;
+    @BindView(R.id.text_activity_title)
+    TextView textActivityTitle;
 
     @BindView(R.id.text_total)
     TextView textTotal;
@@ -71,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        textActivityTitle.setText(R.string.activity_title_my_wallet);
         // 탭 리스트 추가
         tabList.add(InterestTabFragment.newInstance(getString(R.string.interest_tab_title)));
         tabList.add(TotalTabFragment.newInstance(getString(R.string.total_tab_title)));
@@ -177,6 +184,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
     }
 
     private void setTotalText(long number) {
-        textTotal.setText(String.format(Locale.getDefault(), "현재 보유 자산\n%d KRW", number));
+        String total = NumberFormat.getIntegerInstance().format(number);
+        SpannableString ss = new SpannableString(String.format(Locale.getDefault(), "%s  KRW", total));
+        ss.setSpan(new AbsoluteSizeSpan(28, true), 0, total.length() + 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new StyleSpan(Typeface.BOLD), 0, total.length() + 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(new AbsoluteSizeSpan(15, true), total.length() + 1, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        textTotal.setText(ss);
     }
 }

@@ -84,7 +84,9 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(amount -> {
                             textHold.setText(context.getString(R.string.hold_amount_text, amount, type.key));
-                            textPredict.setText(context.getString(R.string.hold_krw_text_with_bracket, (long) (amount * CurrencyUtils.getSafetyPrice(data))));
+                            textPredict.setText(context.getString(
+                                    R.string.hold_krw_text_with_bracket,
+                                    NumberFormat.getIntegerInstance().format(amount * CurrencyUtils.getSafetyPrice(data))));
                         }
                         , Throwable::printStackTrace, () -> {
                             textHold.setText(context.getString(R.string.hold_amount_text, 0F, type.key));
