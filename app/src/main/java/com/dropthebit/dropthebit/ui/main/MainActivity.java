@@ -46,6 +46,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -129,6 +130,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
                 })
                 .create()
                 .show();
+    }
+
+    @OnClick(R.id.image_menu)
+    void onClickMenu() {
+        Toast.makeText(this, "메뉴 아이콘 클릭", Toast.LENGTH_SHORT).show();
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {

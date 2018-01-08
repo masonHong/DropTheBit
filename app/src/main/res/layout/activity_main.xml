@@ -30,7 +30,19 @@
             android:gravity="center"
             android:textColor="#ffffff"
             android:textSize="15sp"
-            tools:text="내 자산"/>
+            tools:text="내 자산" />
+
+        <ImageView
+            android:id="@+id/image_menu"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="21dp"
+            android:background="?attr/selectableItemBackground"
+            android:padding="2.5dp"
+            android:src="@drawable/ic_menu"
+            app:layout_constraintBottom_toBottomOf="@id/text_activity_title"
+            app:layout_constraintLeft_toLeftOf="@id/text_activity_title"
+            app:layout_constraintTop_toTopOf="@id/text_activity_title" />
 
         <View
             android:id="@+id/guide_view_pager"
