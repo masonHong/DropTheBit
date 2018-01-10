@@ -17,4 +17,7 @@ public class Constants {
     public final static int PAYMENT_FIRST = 10000000;
 
     public final static String UNIT_WON = "KRW";
+
+    public final static String FRAGMENT_TOTAL = "totalFragment";
+    public final static String FRAGMENT_INTEREST = "interestFragment";
 }

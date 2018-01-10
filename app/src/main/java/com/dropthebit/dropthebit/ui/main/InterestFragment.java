@@ -3,19 +3,16 @@ package com.dropthebit.dropthebit.ui.main;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.dropthebit.dropthebit.R;
-import com.dropthebit.dropthebit.base.TabFragment;
+import com.dropthebit.dropthebit.base.BaseFragment;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.provider.room.InterestCoin;
-import com.dropthebit.dropthebit.provider.room.InterestCoinDao;
-import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.ui.adapter.MarginItemDecoration;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
 import com.dropthebit.dropthebit.ui.adapter.MainCurrencyListAdapter;
@@ -28,15 +25,11 @@ import java.util.List;
 
 import butterknife.BindDimen;
 import butterknife.BindView;
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by mason-hong on 2017. 12. 16..
  */
-public class InterestTabFragment extends TabFragment {
+public class InterestFragment extends BaseFragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -48,10 +41,9 @@ public class InterestTabFragment extends TabFragment {
     private List<CurrencyType> interestCoins = new ArrayList<>();
     private CurrencyViewHolder.OnCurrencyClickListener onCurrencyClickListener;
 
-    public static InterestTabFragment newInstance(String tabTitle) {
-        InterestTabFragment fragment = new InterestTabFragment();
+    public static InterestFragment newInstance() {
+        InterestFragment fragment = new InterestFragment();
         Bundle args = new Bundle();
-        args.putString(Constants.ARGUMENT_TAB_TITLE, tabTitle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,11 +51,6 @@ public class InterestTabFragment extends TabFragment {
     @Override
     public int getLayoutResourceId() {
         return R.layout.fragment_interest_tab;
-    }
-
-    @Override
-    public String getTabTitle() {
-        return getArguments().getString(Constants.ARGUMENT_TAB_TITLE);
     }
 
     @Override

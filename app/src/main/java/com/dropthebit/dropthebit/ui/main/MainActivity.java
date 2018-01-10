@@ -1,29 +1,21 @@
 package com.dropthebit.dropthebit.ui.main;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.StyleSpan;
-import android.text.style.TextAppearanceSpan;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dropthebit.dropthebit.R;
-import com.dropthebit.dropthebit.base.TabFragment;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
@@ -38,10 +30,8 @@ import com.dropthebit.dropthebit.util.StringUtils;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 import com.dropthebit.dropthebit.viewmodel.InterestViewModel;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -63,16 +53,15 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
     @BindView(R.id.text_total)
     TextView textTotal;
 
-    @BindView(R.id.view_pager)
-    ViewPager viewPager;
+    @BindView(R.id.button_toggle)
+    TextView buttonToggle;
 
-    @BindView(R.id.tab_layout)
-    TabLayout tabLayout;
-
-    private List<TabFragment> tabList = new ArrayList<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Map<CurrencyType, CurrencyData> currencyDataMap;
     private InterestViewModel interestViewModel;
+    private List<Fragment> fragmentList;
+    private List<String> tagList;
+    private int currentFragment = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,16 +70,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
         ButterKnife.bind(this);
 
         textActivityTitle.setText(R.string.activity_title_my_wallet);
-        // 탭 리스트 추가
-        tabList.add(TotalTabFragment.newInstance(getString(R.string.total_tab_title)));
-        tabList.add(InterestTabFragment.newInstance(getString(R.string.interest_tab_title)));
-        // 탭 어뎁터 설정
-        viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
-        // 탭의 최대 개수 2 (탭의 계속적인 생성 방지
-        viewPager.setOffscreenPageLimit(2);
-        // 탭 레이아웃 설정
-        tabLayout.setupWithViewPager(viewPager);
-
         CommonPref commonPref = CommonPref.getInstance(this);
         if (commonPref.isFirstPayment()) {
             commonPref.setFirstPayment(false);
@@ -101,6 +80,15 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
         subscribeTotal();
 
         interestViewModel = ViewModelProviders.of(this).get(InterestViewModel.class);
+        fragmentList = new ArrayList<>();
+        tagList = new ArrayList<>();
+        fragmentList.add(TotalFragment.newInstance());
+        tagList.add(Constants.FRAGMENT_TOTAL);
+        fragmentList.add(InterestFragment.newInstance());
+        tagList.add(Constants.FRAGMENT_INTEREST);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container_fragment, fragmentList.get(currentFragment), tagList.get(currentFragment))
+                .commit();
     }
 
     @Override
@@ -137,26 +125,12 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
         Toast.makeText(this, "메뉴 아이콘 클릭", Toast.LENGTH_SHORT).show();
     }
 
-    private class ViewPagerAdapter extends FragmentPagerAdapter {
-
-        ViewPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return tabList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return tabList.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabList.get(position).getTabTitle();
-        }
+    @OnClick(R.id.button_toggle)
+    void onToggle() {
+        currentFragment = (currentFragment + 1) % fragmentList.size();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container_fragment, fragmentList.get(currentFragment), tagList.get(currentFragment))
+                .commit();
     }
 
     private void subscribeTotal() {
