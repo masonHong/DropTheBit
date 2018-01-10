@@ -1,6 +1,7 @@
 package com.dropthebit.dropthebit.ui.adapter.viewholder;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -11,11 +12,10 @@ import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.provider.room.WalletDao;
+import com.dropthebit.dropthebit.util.AndroidUtils;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.util.RxUtils;
 import com.dropthebit.dropthebit.util.StringUtils;
-
-import java.text.NumberFormat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,12 +38,16 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.text_predict)
     TextView textPredict;
 
+    @BindView(R.id.text_diff)
+    TextView textDiff;
+
     private Context context;
     private OnCurrencyClickListener onCurrencyClickListener;
     private WalletDao walletDao;
 
     public interface OnCurrencyClickListener {
         void onCurrencyClick(CurrencyType type);
+
         void onCurrencyLongClick(CurrencyType type);
     }
 
@@ -73,6 +77,13 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
         this.type = data.getType();
         textCoinName.setText(data.getName());
         textCurrentPrice.setText(StringUtils.getPriceString(CurrencyUtils.getSafetyPrice(data), ""));
+        String diff = CurrencyUtils.getDiffString(data);
+        textDiff.setText(diff);
+        if (diff.startsWith("+")) {
+            textDiff.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.app_red));
+        } else {
+            textDiff.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.app_blue));
+        }
 
         walletDao.loadWallet(type.key)
                 .subscribeOn(Schedulers.io())

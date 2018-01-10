@@ -9,16 +9,18 @@ public class CurrencyData {
     private String price;
     private String maxPrice;
     private String minPrice;
+    private String openingPrice;
 
     public CurrencyData() {
     }
 
-    public CurrencyData(CurrencyType type, String name, String price, String maxPrice, String minPrice) {
+    public CurrencyData(CurrencyType type, String name, String price, String maxPrice, String minPrice, String openingPrice) {
         this.type = type;
         this.name = name;
         this.price = price;
         this.maxPrice = maxPrice;
         this.minPrice = minPrice;
+        this.openingPrice = openingPrice;
     }
 
     public CurrencyType getType() {
@@ -39,5 +41,9 @@ public class CurrencyData {
 
     public String getMinPrice() {
         return minPrice;
+    }
+
+    public String getOpeningPrice() {
+        return openingPrice;
     }
 }

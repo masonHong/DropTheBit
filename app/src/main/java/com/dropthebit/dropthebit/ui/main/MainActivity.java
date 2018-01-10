@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
 
         textActivityTitle.setText(R.string.activity_title_my_wallet);
         // 탭 리스트 추가
-        tabList.add(InterestTabFragment.newInstance(getString(R.string.interest_tab_title)));
         tabList.add(TotalTabFragment.newInstance(getString(R.string.total_tab_title)));
+        tabList.add(InterestTabFragment.newInstance(getString(R.string.interest_tab_title)));
         // 탭 어뎁터 설정
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
         // 탭의 최대 개수 2 (탭의 계속적인 생성 방지

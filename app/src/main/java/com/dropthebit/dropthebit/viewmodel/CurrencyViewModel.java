@@ -52,23 +52,23 @@ public class CurrencyViewModel extends AndroidViewModel {
                 .subscribe(data -> {
                     LinkedHashMap<CurrencyType, CurrencyData> map = new LinkedHashMap<>();
                     BithumbCurrencyDTO target = data.getBTC();
-                    map.put(CurrencyType.BitCoin, new CurrencyData(CurrencyType.BitCoin, coinNames[0], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+                    map.put(CurrencyType.BitCoin, new CurrencyData(CurrencyType.BitCoin, coinNames[0], target.getClosing_price(), target.getMax_price(), target.getMin_price(), target.getOpening_price()));
                     target = data.getBCH();
-                    map.put(CurrencyType.BitCoinCache, new CurrencyData(CurrencyType.BitCoinCache, coinNames[1], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+                    map.put(CurrencyType.BitCoinCache, new CurrencyData(CurrencyType.BitCoinCache, coinNames[1], target.getClosing_price(), target.getMax_price(), target.getMin_price(), target.getOpening_price()));
                     target = data.getBTG();
-                    map.put(CurrencyType.BitCoinGold, new CurrencyData(CurrencyType.BitCoinGold, coinNames[2], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+                    map.put(CurrencyType.BitCoinGold, new CurrencyData(CurrencyType.BitCoinGold, coinNames[2], target.getClosing_price(), target.getMax_price(), target.getMin_price(), target.getOpening_price()));
                     target = data.getETH();
-                    map.put(CurrencyType.Etherium, new CurrencyData(CurrencyType.Etherium, coinNames[3], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+                    map.put(CurrencyType.Etherium, new CurrencyData(CurrencyType.Etherium, coinNames[3], target.getClosing_price(), target.getMax_price(), target.getMin_price(), target.getOpening_price()));
                     target = data.getETC();
-                    map.put(CurrencyType.EtheriumClassic, new CurrencyData(CurrencyType.EtheriumClassic, coinNames[4], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+                    map.put(CurrencyType.EtheriumClassic, new CurrencyData(CurrencyType.EtheriumClassic, coinNames[4], target.getClosing_price(), target.getMax_price(), target.getMin_price(), target.getOpening_price()));
                     target = data.getXRP();
-                    map.put(CurrencyType.Ripple, new CurrencyData(CurrencyType.Ripple, coinNames[5], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+                    map.put(CurrencyType.Ripple, new CurrencyData(CurrencyType.Ripple, coinNames[5], target.getClosing_price(), target.getMax_price(), target.getMin_price(), target.getOpening_price()));
                     target = data.getLTC();
-                    map.put(CurrencyType.LiteCoin, new CurrencyData(CurrencyType.LiteCoin, coinNames[6], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+                    map.put(CurrencyType.LiteCoin, new CurrencyData(CurrencyType.LiteCoin, coinNames[6], target.getClosing_price(), target.getMax_price(), target.getMin_price(), target.getOpening_price()));
                     target = data.getQTUM();
-                    map.put(CurrencyType.Qtum, new CurrencyData(CurrencyType.Qtum, coinNames[7], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+                    map.put(CurrencyType.Qtum, new CurrencyData(CurrencyType.Qtum, coinNames[7], target.getClosing_price(), target.getMax_price(), target.getMin_price(), target.getOpening_price()));
                     target = data.getDASH();
-                    map.put(CurrencyType.Dash, new CurrencyData(CurrencyType.Dash, coinNames[8], target.getClosing_price(), target.getMax_price(), target.getMin_price()));
+                    map.put(CurrencyType.Dash, new CurrencyData(CurrencyType.Dash, coinNames[8], target.getClosing_price(), target.getMax_price(), target.getMin_price(), target.getOpening_price()));
                     currencyList.setValue(map);
                 });
     }

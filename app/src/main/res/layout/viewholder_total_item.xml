@@ -56,25 +56,42 @@
         app:layout_constraintTop_toBottomOf="@id/text_hold"
         tools:text="50,000 KRW" />
 
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/text_now"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:text="NOW"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/text_current_price_number"
+        app:layout_constraintLeft_toRightOf="@id/guide_line"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/text_current_price_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#000"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/text_diff"
+        app:layout_constraintLeft_toRightOf="@id/guide_line"
+        app:layout_constraintTop_toBottomOf="@id/text_now"
         tools:text="19,504,200 KRW" />
 
     <TextView
-        android:id="@+id/text_current_price"
+        android:id="@+id/text_diff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:text="현재 가격"
-        android:textSize="16sp"
+        android:textSize="9sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/text_current_price_number"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintLeft_toRightOf="@id/guide_line"
+        app:layout_constraintTop_toBottomOf="@id/text_current_price_number"
+        tools:text="-190,000 ( -5.12% )"/>
 </android.support.constraint.ConstraintLayout>
