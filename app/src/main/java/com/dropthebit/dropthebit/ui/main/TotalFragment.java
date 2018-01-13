@@ -62,6 +62,7 @@ public class TotalFragment extends BaseFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new MarginItemDecoration(margin));
+        recyclerView.setItemAnimator(null);
         // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
         // 업데이트 될 때 마다 어뎁터에 적용

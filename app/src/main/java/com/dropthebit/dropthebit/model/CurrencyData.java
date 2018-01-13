@@ -35,6 +35,10 @@ public class CurrencyData {
         return price;
     }
 
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
     public String getMaxPrice() {
         return maxPrice;
     }
@@ -45,5 +49,10 @@ public class CurrencyData {
 
     public String getOpeningPrice() {
         return openingPrice;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof CurrencyData && ((CurrencyData) obj).type == type;
     }
 }
