@@ -28,7 +28,6 @@ import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.util.StringUtils;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
-import com.dropthebit.dropthebit.viewmodel.InterestViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Map<CurrencyType, CurrencyData> currencyDataMap;
-    private InterestViewModel interestViewModel;
+    private CurrencyViewModel currencyViewModel;
     private List<Fragment> fragmentList;
     private List<String> tagList;
     private int currentFragment = 0;
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
 
         subscribeTotal();
 
-        interestViewModel = ViewModelProviders.of(this).get(InterestViewModel.class);
+        currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
         fragmentList = new ArrayList<>();
         tagList = new ArrayList<>();
         fragmentList.add(TotalFragment.newInstance());
@@ -110,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
                 .setItems(new CharSequence[]{"add", "remove"}, (dialog, which) -> {
                     Timber.i("dialog which: %d", which);
                     if (which == 0) {
-                        interestViewModel.addInterestCoin(type.key);
+                        currencyViewModel.addInterestCoin(type.key);
                     } else {
-                        interestViewModel.removeInterestCoin(type.key);
+                        currencyViewModel.removeInterestCoin(type.key);
                     }
                     dialog.dismiss();
                 })
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyViewHolde
 
     private void subscribeTotal() {
         ViewModelProviders.of(this).get(CurrencyViewModel.class)
-                .getCurrencyList()
+                .getTotalMapLiveData()
                 .observe(this, map -> {
                     currencyDataMap = map;
                     updateTotal();

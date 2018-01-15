@@ -9,7 +9,6 @@ import android.view.View;
 
 import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.base.BaseFragment;
-import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.ui.adapter.MarginItemDecoration;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
 import com.dropthebit.dropthebit.ui.adapter.MainCurrencyListAdapter;
@@ -66,7 +65,7 @@ public class TotalFragment extends BaseFragment {
         // 실시간 코인 시세 뷰 모델
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
         // 업데이트 될 때 마다 어뎁터에 적용
-        currencyViewModel.getCurrencyList().observe(this, map -> {
+        currencyViewModel.getTotalMapLiveData().observe(this, map -> {
             if (map != null) {
                 adapter.setList(new ArrayList<>(map.values()));
             }

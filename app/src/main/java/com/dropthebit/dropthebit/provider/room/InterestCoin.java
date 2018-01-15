@@ -16,18 +16,19 @@ import android.support.annotation.NonNull;
 public class InterestCoin {
 
     @NonNull
-    public String name="";
+    public String name = "";
 
-    public InterestCoin()
-    {
-
-    }
-
-    public  InterestCoin(@NonNull String name)
-    {
+    public InterestCoin(@NonNull String name) {
         this.name = name;
     }
 
     @Override
-    public String toString(){return name;}
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof InterestCoin && ((InterestCoin) obj).name.equals(name);
+    }
 }

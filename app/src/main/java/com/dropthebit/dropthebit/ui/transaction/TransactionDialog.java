@@ -8,7 +8,6 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,9 +42,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
 /**
  * Created by mason-hong on 2017. 12. 16..
@@ -308,7 +305,7 @@ public class TransactionDialog extends DialogFragment {
         textName.setText(names[currencyType.ordinal()]);
         textSymbol.setText(currencyType.key);
         currencyViewModel = ViewModelProviders.of(getActivity()).get(CurrencyViewModel.class);
-        currencyViewModel.getCurrencyList()
+        currencyViewModel.getTotalMapLiveData()
                 .observe(this, map -> {
                     if (map.containsKey(currencyType)) {
                         realTimePrice = CurrencyUtils.getSafetyPrice(map.get(currencyType));

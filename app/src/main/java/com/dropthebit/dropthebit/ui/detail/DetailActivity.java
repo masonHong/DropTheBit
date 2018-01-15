@@ -109,7 +109,7 @@ public class DetailActivity extends AppCompatActivity implements TransactionDial
         textCoinName.setText(coinNames[type.ordinal()]);
 
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
-        currencyViewModel.getCurrencyList().observe(this, map -> {
+        currencyViewModel.getTotalMapLiveData().observe(this, map -> {
             if (map != null && map.containsKey(type)) {
                 long price = CurrencyUtils.getSafetyPrice(map.get(type));
                 textCurrentPriceNumber.setText(NumberFormat.getInstance().format(price));
