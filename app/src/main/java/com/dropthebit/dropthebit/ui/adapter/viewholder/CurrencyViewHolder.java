@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
@@ -16,6 +17,7 @@ import com.dropthebit.dropthebit.util.AndroidUtils;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.util.RxUtils;
 import com.dropthebit.dropthebit.util.StringUtils;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,6 +28,10 @@ import io.reactivex.schedulers.Schedulers;
  * Created by mason-hong on 2017. 12. 29..
  */
 public class CurrencyViewHolder extends RecyclerView.ViewHolder {
+
+    @BindView(R.id.image_coin)
+    ImageView imageCoin;
+
     @BindView(R.id.text_coin_name)
     TextView textCoinName;
 
@@ -75,6 +81,9 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(CurrencyData data) {
         this.type = data.getType();
+        Picasso.with(context)
+                .load(CurrencyUtils.getCoinImage(type))
+                .into(imageCoin);
         textCoinName.setText(data.getName());
         textCurrentPrice.setText(StringUtils.getPriceString(CurrencyUtils.getSafetyPrice(data), ""));
         String diff = CurrencyUtils.getDiffString(data);
