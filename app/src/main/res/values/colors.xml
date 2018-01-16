@@ -5,9 +5,10 @@
     <color name="colorAccent">#ffe150</color>
 
     <color name="app_black">#191919</color>
-    <color name="app_light_gray">#acacac</color>
     <color name="app_yellow">#ffe150</color>
+    <color name="app_dark_gray">#454545</color>
     <color name="app_gray">#757575</color>
+    <color name="app_light_gray">#e2e2e2</color>
     <color name="app_blue">#258ee9</color>
     <color name="app_red">#e94d25</color>
 </resources>

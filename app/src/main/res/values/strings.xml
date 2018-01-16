@@ -16,4 +16,5 @@
     <string name="transaction_wrong_message">값이 잘못되었습니다</string>
     <string name="activity_title_my_wallet">내 자산</string>
     <string name="button_add_currency_text">화폐 추가하기</string>
+    <string name="current_price">현재가격</string>
 </resources>

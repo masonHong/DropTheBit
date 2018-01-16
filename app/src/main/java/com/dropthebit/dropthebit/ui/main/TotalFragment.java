@@ -11,7 +11,7 @@ import com.dropthebit.dropthebit.R;
 import com.dropthebit.dropthebit.base.BaseFragment;
 import com.dropthebit.dropthebit.ui.adapter.MarginItemDecoration;
 import com.dropthebit.dropthebit.ui.adapter.viewholder.CurrencyViewHolder;
-import com.dropthebit.dropthebit.ui.adapter.MainCurrencyListAdapter;
+import com.dropthebit.dropthebit.ui.adapter.CurrencyListAdapter;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class TotalFragment extends BaseFragment {
     @BindDimen(R.dimen.margin_coin_viewholder)
     int margin;
 
-    private MainCurrencyListAdapter adapter;
+    private CurrencyListAdapter adapter;
     private CurrencyViewHolder.OnCurrencyClickListener onCurrencyClickListener;
 
     public static TotalFragment newInstance() {
@@ -56,7 +56,7 @@ public class TotalFragment extends BaseFragment {
     @Override
     public void initView(View view) {
         // 리사이클러뷰 설정
-        adapter = new MainCurrencyListAdapter(getContext(), onCurrencyClickListener);
+        adapter = new CurrencyListAdapter(getContext(), onCurrencyClickListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);

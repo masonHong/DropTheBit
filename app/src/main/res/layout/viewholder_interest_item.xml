@@ -3,90 +3,101 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:background="@drawable/shape_coin_viewholder">
+    android:layout_height="145dp"
+    android:background="@drawable/shape_coin_viewholder"
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/image_coin"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="19dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toTopOf="@id/text_coin_name"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintRight_toLeftOf="@+id/line1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/text_coin_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
+        android:layout_marginTop="7dp"
         android:textColor="@color/app_black"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/text_hold"
-        app:layout_constraintLeft_toRightOf="@id/image_coin"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="비트코인" />
-
-    <TextView
-        android:id="@+id/text_hold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:textColor="@color/app_gray"
-        android:textSize="10sp"
-        app:layout_constraintBottom_toTopOf="@id/text_predict"
-        app:layout_constraintLeft_toLeftOf="@id/text_coin_name"
-        app:layout_constraintTop_toBottomOf="@id/text_coin_name"
-        tools:text="0.001 BTC" />
-
-    <TextView
-        android:id="@+id/text_predict"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textColor="@color/app_dark_gray"
-        android:textSize="12sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/text_coin_name"
-        app:layout_constraintTop_toBottomOf="@id/text_hold"
-        tools:text="50,000 KRW" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/line1"
+        app:layout_constraintTop_toBottomOf="@id/image_coin"
+        tools:text="비트코인" />
 
     <View
         android:id="@+id/line1"
         android:layout_width="1dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="181dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="124dp"
         android:background="@color/app_light_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/text_hold_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="보유코인"
+        android:textColor="@color/app_gray"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/text_hold"
+        app:layout_constraintLeft_toRightOf="@id/line1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/text_hold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/app_gray"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/text_predict"
+        app:layout_constraintLeft_toLeftOf="@id/text_hold_title"
+        app:layout_constraintTop_toBottomOf="@id/text_hold_title"
+        tools:text="0.001 BTC" />
+
+    <TextView
+        android:id="@+id/text_predict"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/app_dark_gray"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/text_now"
+        app:layout_constraintLeft_toLeftOf="@id/text_hold_title"
+        app:layout_constraintTop_toBottomOf="@id/text_hold"
+        tools:text="50,000 KRW" />
+
+    <TextView
         android:id="@+id/text_now"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="14dp"
         android:text="@string/current_price"
         android:textColor="@color/app_gray"
         android:textSize="10sp"
         app:layout_constraintBottom_toTopOf="@+id/text_current_price_number"
-        app:layout_constraintLeft_toRightOf="@id/line1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintLeft_toLeftOf="@id/text_hold_title"
+        app:layout_constraintTop_toBottomOf="@id/text_predict" />
 
     <TextView
         android:id="@+id/text_current_price_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
         android:textColor="@color/app_black"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/text_diff"
-        app:layout_constraintLeft_toLeftOf="@id/text_now"
+        app:layout_constraintLeft_toLeftOf="@id/text_hold_title"
         app:layout_constraintTop_toBottomOf="@id/text_now"
         tools:text="19,504,200 KRW" />
 
@@ -94,10 +105,9 @@
         android:id="@+id/text_diff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/text_now"
+        app:layout_constraintLeft_toLeftOf="@id/text_hold_title"
         app:layout_constraintTop_toBottomOf="@id/text_current_price_number"
         tools:text="-190,000 ( -5.12% )" />
 </android.support.constraint.ConstraintLayout>
