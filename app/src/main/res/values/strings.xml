@@ -4,8 +4,8 @@
     <string name="total_tab_title">전체</string>
     <string name="amount_of_buying">매수량</string>
     <string name="amount_of_selling">매도량</string>
-    <string name="buying">매수</string>
-    <string name="selling">매도</string>
+    <string name="buying">매수하기</string>
+    <string name="selling">매도하기</string>
     <string name="payment_first_message">시작 자금 1000만원을 지급받았습니다</string>
     <string name="transaction_successful_message">거래가 성사되었습니다</string>
     <string name="transaction_lack_krw_message">잔액이 부족합니다</string>

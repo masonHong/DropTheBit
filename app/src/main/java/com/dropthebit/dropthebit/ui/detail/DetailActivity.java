@@ -1,10 +1,9 @@
 package com.dropthebit.dropthebit.ui.detail;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ProgressBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
@@ -18,21 +17,12 @@ import com.dropthebit.dropthebit.provider.room.PriceHistoryDao;
 import com.dropthebit.dropthebit.provider.room.RoomProvider;
 import com.dropthebit.dropthebit.provider.room.WalletDao;
 import com.dropthebit.dropthebit.ui.transaction.TransactionDialog;
-import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.util.RxUtils;
-import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -42,20 +32,8 @@ public class DetailActivity extends AppCompatActivity implements TransactionDial
     @BindView(R.id.text_coin_name)
     TextView textCoinName;
 
-    @BindView(R.id.text_current_price_number)
-    TextView textCurrentPriceNumber;
-
-    @BindView(R.id.text_hold)
-    TextView textHold;
-
-    @BindView(R.id.text_predict)
-    TextView textPredict;
-
-    @BindView(R.id.chart)
-    LineChart lineChart;
-
-    @BindView(R.id.progress_loading)
-    ProgressBar progressLoading;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
 
     // 코인 타입
     private CurrencyType type;
@@ -69,6 +47,8 @@ public class DetailActivity extends AppCompatActivity implements TransactionDial
     private double amount;
     // Observable 취소 용도
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    private DetailRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,18 +87,21 @@ public class DetailActivity extends AppCompatActivity implements TransactionDial
     private void initView() {
         String[] coinNames = getResources().getStringArray(R.array.coinNames);
         textCoinName.setText(coinNames[type.ordinal()]);
-
-        CurrencyViewModel currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
-        currencyViewModel.getTotalMapLiveData().observe(this, map -> {
-            if (map != null && map.containsKey(type)) {
-                long price = CurrencyUtils.getSafetyPrice(map.get(type));
-                textCurrentPriceNumber.setText(NumberFormat.getInstance().format(price));
-                textHold.setText(getString(R.string.hold_amount_text, amount, type.key));
-                textPredict.setText(getString(R.string.hold_krw_text_with_bracket, (long) (amount * price)));
-            }
-        });
-
-        updateAmount();
+        adapter = new DetailRecyclerAdapter();
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+//        CurrencyViewModel currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
+//        currencyViewModel.getTotalMapLiveData().observe(this, map -> {
+//            if (map != null && map.containsKey(type)) {
+//                long price = CurrencyUtils.getSafetyPrice(map.get(type));
+//                textCurrentPriceNumber.setText(NumberFormat.getInstance().format(price));
+//                textHold.setText(getString(R.string.hold_amount_text, amount, type.key));
+//                textPredict.setText(getString(R.string.hold_krw_text_with_bracket, (long) (amount * price)));
+//            }
+//        });
+//
+//        updateAmount();
 
         RxUtils.clickOne(findViewById(R.id.button_buy), 1000, v -> {
             TransactionDialog dialog = TransactionDialog.newInstance(TransactionDialog.TYPE_BUY, type);
@@ -189,41 +172,41 @@ public class DetailActivity extends AppCompatActivity implements TransactionDial
      */
     private void updateChart() {
         // 로컬에 있는 데이터 기반으로 차트 업데이트 요청
-        Disposable disposable = priceHistoryDao.loadAllHistories(type.key)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(list -> {
-                    if (list.length > 0) {
-                        historyList = list;
-                        final int minute = 1000 * 60;   // 1분
-                        List<Entry> entries = new ArrayList<>();
-                        for (PriceHistory history : historyList) {
-                            // 10분 단위로 x 좌표 찍기, y 좌표는 price
-                            entries.add(new Entry(history.time / (10 * minute), history.price));
-                        }
-                        // 데이터 설정
-                        LineDataSet dataSet = new LineDataSet(entries, type.key);
-                        LineData lineData = new LineData(dataSet);
-                        // 데이터 표시 제거
-                        lineData.setValueFormatter((value, entry, dataSetIndex, viewPortHandler) -> "");
-                        lineChart.setData(lineData);
-                        // 보이는 데이터 최대 100개
-                        lineChart.setVisibleXRangeMaximum(100);
-                        // 차트 맨 끝 으로 이동
-                        lineChart.moveViewToX(entries.get(entries.size() - 1).getX());
-                        // 그리기
-                        lineChart.invalidate();
-                        showChartLoadingIndicator(false);
-                    }
-                }, throwable -> {
-                    throwable.printStackTrace();
-                    showChartLoadingIndicator(false);
-                });
-        compositeDisposable.add(disposable);
+//        Disposable disposable = priceHistoryDao.loadAllHistories(type.key)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(list -> {
+//                    if (list.length > 0) {
+//                        historyList = list;
+//                        final int minute = 1000 * 60;   // 1분
+//                        List<Entry> entries = new ArrayList<>();
+//                        for (PriceHistory history : historyList) {
+//                            // 10분 단위로 x 좌표 찍기, y 좌표는 price
+//                            entries.add(new Entry(history.time / (10 * minute), history.price));
+//                        }
+//                        // 데이터 설정
+//                        LineDataSet dataSet = new LineDataSet(entries, type.key);
+//                        LineData lineData = new LineData(dataSet);
+//                        // 데이터 표시 제거
+//                        lineData.setValueFormatter((value, entry, dataSetIndex, viewPortHandler) -> "");
+//                        lineChart.setData(lineData);
+//                        // 보이는 데이터 최대 100개
+//                        lineChart.setVisibleXRangeMaximum(100);
+//                        // 차트 맨 끝 으로 이동
+//                        lineChart.moveViewToX(entries.get(entries.size() - 1).getX());
+//                        // 그리기
+//                        lineChart.invalidate();
+//                        showChartLoadingIndicator(false);
+//                    }
+//                }, throwable -> {
+//                    throwable.printStackTrace();
+//                    showChartLoadingIndicator(false);
+//                });
+//        compositeDisposable.add(disposable);
     }
 
     private void showChartLoadingIndicator(boolean show) {
-        progressLoading.setVisibility(show ? View.VISIBLE : View.GONE);
-        lineChart.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+//        progressLoading.setVisibility(show ? View.VISIBLE : View.GONE);
+//        lineChart.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
     }
 }
