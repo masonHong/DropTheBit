@@ -3,14 +3,18 @@ package com.dropthebit.dropthebit.ui.transaction;
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -126,15 +130,20 @@ public class TransactionDialog extends DialogFragment {
         }
     }
 
-    @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_transaction, null);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_FRAME, 0);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_transaction, container);
         ButterKnife.bind(this, view);
         initView();
-        return new AlertDialog.Builder(getContext())
-                .setView(view)
-                .create();
+
+        return view;
     }
 
     @Override
@@ -143,7 +152,8 @@ public class TransactionDialog extends DialogFragment {
         if (getDialog().getWindow() != null) {
             WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
             params.width = WindowManager.LayoutParams.MATCH_PARENT;
-            getDialog().getWindow().setGravity(Gravity.BOTTOM);
+            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+            getDialog().getWindow().setAttributes(params);
         }
         Disposable disposable = Flowable.interval(0, Constants.PERIOD_TRANSACTION_INTERVAL, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -206,7 +216,7 @@ public class TransactionDialog extends DialogFragment {
         }
     }
 
-    @OnClick(R.id.button_cancel)
+    @OnClick(R.id.button_close)
     public void onClickCancel() {
         dismiss();
     }
@@ -249,6 +259,11 @@ public class TransactionDialog extends DialogFragment {
                         editPredictPrice.setText(String.format(Locale.getDefault(), "%d", krw));
                     });
         }
+    }
+
+    @OnClick(R.id.view_dim)
+    void onClickDim() {
+        dismiss();
     }
 
     private void handleBuying() {
