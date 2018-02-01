@@ -1,9 +1,11 @@
 package com.dropthebit.dropthebit.model;
 
+import com.dropthebit.dropthebit.base.HasViewType;
+
 /**
  * Created by mason-hong on 2017. 12. 16..
  */
-public class CurrencyData {
+public class CurrencyData extends HasViewType {
     private CurrencyType type;
     private String name;
     private String price;

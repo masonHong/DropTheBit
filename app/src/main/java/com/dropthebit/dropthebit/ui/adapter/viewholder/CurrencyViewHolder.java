@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dropthebit.dropthebit.R;
+import com.dropthebit.dropthebit.base.BaseViewHolder;
 import com.dropthebit.dropthebit.common.Constants;
 import com.dropthebit.dropthebit.model.CurrencyData;
 import com.dropthebit.dropthebit.model.CurrencyType;
@@ -27,7 +28,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by mason-hong on 2017. 12. 29..
  */
-public class CurrencyViewHolder extends RecyclerView.ViewHolder {
+public class CurrencyViewHolder extends BaseViewHolder {
 
     @BindView(R.id.image_coin)
     ImageView imageCoin;
@@ -79,7 +80,12 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder {
         walletDao = RoomProvider.getInstance(itemView.getContext()).getDatabase().walletDao();
     }
 
-    public void bind(CurrencyData data) {
+    @Override
+    public void bind(Object obj) {
+        if (!(obj instanceof CurrencyData)) {
+            return;
+        }
+        CurrencyData data = (CurrencyData) obj;
         this.type = data.getType();
         Picasso.with(context)
                 .load(CurrencyUtils.getCoinImage(type))
