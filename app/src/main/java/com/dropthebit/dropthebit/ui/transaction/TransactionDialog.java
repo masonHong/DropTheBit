@@ -187,9 +187,7 @@ public class TransactionDialog extends DialogFragment {
                         NumberFormat numberFormat = NumberFormat.getNumberInstance();
                         textPrice.setText(numberFormat.format(currentPrice));
                     }
-                    if (currentCount % 500 == 0) {
-                        textTime.setText(String.format(Locale.getDefault(), "%.01f초", (Constants.PERIOD_TRANSACTION_REFRESH - currentCount) / 1000F));
-                    }
+                    textTime.setText(String.format(Locale.getDefault(), "%.01f초", (Constants.PERIOD_TRANSACTION_REFRESH - currentCount) / 1000F));
                 });
         compositeDisposable.add(disposable);
         if (!isOpened) {

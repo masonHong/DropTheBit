@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:textColor="#000"
+            android:textColor="@color/app_black"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@id/image_currency"
             app:layout_constraintLeft_toRightOf="@id/image_currency"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="29dp"
             android:text="@+id/text_price"
-            android:textColor="#000"
+            android:textColor="@color/app_black"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/image_currency"
@@ -81,16 +81,28 @@
             app:layout_constraintTop_toTopOf="@id/image_currency"
             tools:text="19,025,100원" />
 
+        <View
+            android:id="@+id/line1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="23dp"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="14dp"
+            android:background="@color/app_light_gray"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_currency" />
+
         <TextView
             android:id="@+id/text_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="20dp"
-            android:textColor="#888"
+            android:layout_marginStart="29dp"
+            android:layout_marginTop="22dp"
+            android:textColor="@color/app_black"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image_currency"
+            app:layout_constraintTop_toBottomOf="@id/line1"
             tools:text="매수량" />
 
         <TextView
@@ -112,7 +124,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="29dp"
             android:layout_marginTop="5dp"
             android:inputType="numberDecimal"
             android:text="0"
@@ -146,10 +158,10 @@
             android:id="@+id/text_predict"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="29dp"
             android:layout_marginTop="5dp"
             android:text="예상금액"
-            android:textColor="#888"
+            android:textColor="@color/app_black"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_hold" />
@@ -173,7 +185,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="29dp"
             android:layout_marginTop="5dp"
             android:digits="0123456789,"
             android:inputType="number"
@@ -209,12 +221,14 @@
             android:id="@+id/text_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="11dp"
             android:layout_marginTop="5dp"
-            android:textColor="#000"
-            android:textSize="24sp"
+            android:textColor="@color/app_black"
+            android:textSize="25sp"
             android:textStyle="bold"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/text_time_help"
             app:layout_constraintTop_toBottomOf="@id/text_krw"
             tools:text="2.1초" />
 
@@ -222,18 +236,25 @@
             android:id="@+id/text_time_help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_time" />
+            android:layout_marginBottom="4dp"
+            android:text="안에 확인하지 않으면 시세가 변경될 수 있습니다."
+            android:textColor="@color/app_black"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/text_time"
+            app:layout_constraintLeft_toRightOf="@id/text_time"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <ProgressBar
             android:id="@+id/progress_time"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="26dp"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_time_help" />
+            app:layout_constraintTop_toBottomOf="@id/text_time" />
 
         <TextView
             android:id="@+id/button_confirm"
