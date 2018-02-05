@@ -1,21 +1,22 @@
 package com.dropthebit.dropthebit.ui.transaction;
 
-import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -65,6 +66,9 @@ public class TransactionDialog extends DialogFragment {
         void onTransaction(double amount, long price);
     }
 
+    @BindView(R.id.container_dialog)
+    View containerDialog;
+
     @BindView(R.id.text_title)
     TextView textTitle;
 
@@ -112,6 +116,7 @@ public class TransactionDialog extends DialogFragment {
     private int cursorPosition = 0;
     private WalletDao walletDao;
     private OnTransactionListener onTransactionListener;
+    private boolean isOpened = false;
 
     public static TransactionDialog newInstance(@TransactionType int transactionType, CurrencyType currencyType) {
         TransactionDialog dialog = new TransactionDialog();
@@ -155,6 +160,16 @@ public class TransactionDialog extends DialogFragment {
             params.height = WindowManager.LayoutParams.MATCH_PARENT;
             getDialog().getWindow().setAttributes(params);
         }
+        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    closeDialog();
+                    return true;
+                }
+                return false;
+            }
+        });
         Disposable disposable = Flowable.interval(0, Constants.PERIOD_TRANSACTION_INTERVAL, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(time -> {
@@ -172,6 +187,9 @@ public class TransactionDialog extends DialogFragment {
                     }
                 });
         compositeDisposable.add(disposable);
+        if (!isOpened) {
+            openDialog();
+        }
     }
 
     @Override
@@ -218,14 +236,14 @@ public class TransactionDialog extends DialogFragment {
 
     @OnClick(R.id.button_close)
     public void onClickCancel() {
-        dismiss();
+        closeDialog();
     }
 
     @OnClick(R.id.button_confirm)
     public void onClickConfirm() {
         double amount = Double.parseDouble(editAmount.getText().toString());
         long predictPrice = Long.parseLong(editPredictPrice.getText().toString().replaceAll(",", ""));
-        if (amount > 0 && predictPrice > 0 ) {
+        if (amount > 0 && predictPrice > 0) {
             switch (transactionType) {
                 case TYPE_BUY:
                     handleBuying();
@@ -234,7 +252,7 @@ public class TransactionDialog extends DialogFragment {
                     handleSelling();
                     break;
                 default:
-                    dismiss();
+                    closeDialog();
             }
         } else {
             Toast.makeText(getContext(), R.string.transaction_wrong_message, Toast.LENGTH_SHORT).show();
@@ -263,7 +281,7 @@ public class TransactionDialog extends DialogFragment {
 
     @OnClick(R.id.view_dim)
     void onClickDim() {
-        dismiss();
+        closeDialog();
     }
 
     private void handleBuying() {
@@ -282,7 +300,7 @@ public class TransactionDialog extends DialogFragment {
             if (onTransactionListener != null) {
                 onTransactionListener.onTransaction(amount, price);
             }
-            dismiss();
+            closeDialog();
         } else {
             Toast.makeText(getContext(), R.string.transaction_lack_krw_message, Toast.LENGTH_SHORT).show();
         }
@@ -305,7 +323,7 @@ public class TransactionDialog extends DialogFragment {
                                 if (onTransactionListener != null) {
                                     onTransactionListener.onTransaction(amount, price);
                                 }
-                                dismiss();
+                                closeDialog();
                             } else {
                                 Toast.makeText(getContext(), R.string.trasaction_lack_currency_message, Toast.LENGTH_SHORT).show();
                             }
@@ -352,5 +370,44 @@ public class TransactionDialog extends DialogFragment {
                         Throwable::printStackTrace,
                         () -> textHold.setText(getString(R.string.hold_amount_text, 0F, currencyType.key)));
         textKRW.setText(getString(R.string.hold_krw_text, CommonPref.getInstance(getContext()).getKRW()));
+    }
+
+    private void openDialog() {
+        isOpened = true;
+        containerDialog.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                containerDialog.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                TranslateAnimation animation = new TranslateAnimation(0F, 0F, containerDialog.getHeight(), 0F);
+                animation.setDuration(250);
+                animation.setInterpolator(new DecelerateInterpolator());
+                containerDialog.startAnimation(animation);
+            }
+        });
+    }
+
+    private void closeDialog() {
+        if (!isOpened) {
+            return;
+        }
+        isOpened = false;
+        TranslateAnimation animation = new TranslateAnimation(0F, 0F, 0F, containerDialog.getHeight());
+        animation.setDuration(250);
+        animation.setInterpolator(new AccelerateInterpolator());
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                dismiss();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        containerDialog.startAnimation(animation);
     }
 }
