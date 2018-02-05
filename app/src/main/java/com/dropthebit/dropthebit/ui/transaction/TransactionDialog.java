@@ -18,6 +18,7 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import com.dropthebit.dropthebit.provider.room.Wallet;
 import com.dropthebit.dropthebit.provider.room.WalletDao;
 import com.dropthebit.dropthebit.util.CurrencyUtils;
 import com.dropthebit.dropthebit.viewmodel.CurrencyViewModel;
+import com.squareup.picasso.Picasso;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -71,6 +73,9 @@ public class TransactionDialog extends DialogFragment {
 
     @BindView(R.id.text_title)
     TextView textTitle;
+
+    @BindView(R.id.image_currency)
+    ImageView imageCurrency;
 
     @BindView(R.id.text_name)
     TextView textName;
@@ -334,6 +339,10 @@ public class TransactionDialog extends DialogFragment {
     private void initView() {
         transactionType = getArguments().getInt(Constants.ARGUMENT_TYPE, 0);
         currencyType = (CurrencyType) getArguments().getSerializable(Constants.ARGUMENT_CURRENCY_TYPE);
+        Picasso.with(getContext())
+                .load(CurrencyUtils.getCoinImage(currencyType))
+                .fit()
+                .into(imageCurrency);
         String[] names = getResources().getStringArray(R.array.coinNames);
         textName.setText(names[currencyType.ordinal()]);
         textSymbol.setText(currencyType.key);
