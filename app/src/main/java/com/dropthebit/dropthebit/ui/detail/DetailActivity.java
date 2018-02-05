@@ -98,6 +98,7 @@ public class DetailActivity extends AppCompatActivity implements TransactionDial
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new MarginDecoration(0, (int) AndroidUtils.dp2px(this, 10F), 0));
+        recyclerView.setItemAnimator(null);
         CurrencyViewModel currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
         currencyViewModel.getTotalMapLiveData().observe(this, map -> {
             if (map != null && map.containsKey(type)) {
